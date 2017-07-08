@@ -1,0 +1,125 @@
+* {
+	margin:0;
+	padding:0;
+}
+
+input {
+	border-radius: 0;
+	-webkit-appearance: none;
+	-webkit-border-radius:0px
+}
+
+html,body {
+	width: 800px;
+	margin: 0 auto;
+	background-image:url('/static/img/squared_metal.png');
+}
+
+.menu {
+	width : 800px;
+	list-style-type : none;
+	background-color: #D8D8D8;
+	height:50px;
+	line-height:50px;
+	font-size: 30px;
+	background-image:url('/static/img/cream_pixels.png');
+	cursor:default;
+}
+
+.menu li {
+	float : left;
+	text-align:center;
+	width : 200px;
+}
+
+.menu a {
+	color : black;
+	text-decoration : none;
+}
+
+.menu:hover .menu li:hover, .menu a:hover {
+	cursor:default;
+}
+
+.bloc_meteo, .bloc_relay {
+	margin-top:10px;
+	//margin-left:3px;
+	width:395px;
+	float: left;
+}
+
+.bloc_contact, .bloc_lifx {
+	margin-top:10px;
+	//margin-right:3px;
+	width:395px;
+	float: right;
+}
+
+.meteo_title, .meteo_rssi, .meteo_date, .contact_title, .contact_rssi, .contact_date, .relay_title, .relay_rssi, .relay_date, .contact_contact, .lifx_title, .lifx_color, .lifx_intensity  {
+	width:395px;
+	height:45px;
+	float: left;
+	margin-top:3px;
+	background-image:url('/static/img/dark_embroidery.png');
+	color: white;
+	font-size: 25px;
+}
+
+.meteo_temperature, .relay_channel_1, .lifx_on, .lifx_color_r, .lifx_color_b {
+	width:195px;
+	float: left;
+	margin-top:3px;
+	height:45px;
+	background-image:url('/static/img/dark_embroidery.png');
+	color: white;
+	font-size: 25px;
+}
+
+.meteo_humidity, .relay_channel_2, .lifx_off, .lifx_color_g, .lifx_intensity  {
+	width:195px;
+	float:right;
+	margin-top:3px;
+	height:45px;
+	background-image:url('/static/img/dark_embroidery.png');
+	color: white;
+	font-size: 25px;
+}
+
+input[type=range]{
+	-webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+	height: 5px;
+	background: #ddd;
+	border: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	border: none;
+	height: 45px;
+	width: 20px;
+	margin-top: -20px;
+	border-radius:10%;
+}
+
+input[type=range][class=lifx_color_r]::-webkit-slider-thumb {
+	background: #CC1919;
+}
+
+input[type=range][class=lifx_color_g]::-webkit-slider-thumb {
+	background: #1AA53B;
+}
+
+input[type=range][class=lifx_color_b]::-webkit-slider-thumb {
+	background: #1A8BD1;
+}
+
+input[type=range][class=lifx_intensity]::-webkit-slider-thumb {
+	background: #F5F5F5;
+}
+
+input:focus {
+	outline: none;
+}
