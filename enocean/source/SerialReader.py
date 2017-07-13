@@ -1,9 +1,7 @@
 import serial
 from EnOcean import EnOcean
 from threading import Thread
-import MqttClient
 import time
-import config
 import datetime
 
 u8crc8table = [
@@ -43,13 +41,14 @@ u8crc8table = [
 
 
 class SerialReader(Thread):
-    def __init__(self, device):
+    def __init__(self, device, mqtt_client):
         Thread.__init__(self)
         self.device = device
+        self.mqtt_client = mqtt_client
         try:
             self.ser = serial.Serial(self.device, 57600, timeout=0)
         except serial.SerialException:
-            config.system_logger.debug('Could not connect to serial device'+device)
+            print('Could not connect to serial device'+device)
         self.app_version = ''
         self.api_version = ''
         self.chip_id = ''
@@ -168,23 +167,23 @@ class SerialReader(Thread):
     #         self.app_version = str(int(return_data[2:4], 16)) + '.' + str(int(return_data[4:6], 16)) \
     #                            + '.' + str(int(return_data[6:8], 16)) + '.' + str(int(return_data[8:10], 16))
     #         tmp_str = "Application Version: " + self.app_version
-    #         config.system_logger.debug(tmp_str)
+    #         print(tmp_str)
     #         self.api_version = str(int(return_data[10:12], 16)) + '.' + str(int(return_data[12:14], 16)) + '.' \
     #                            + str(int(return_data[14:16], 16)) + '.' + str(int(return_data[16:18], 16))
     #         tmp_str = "API Version: " + self.api_version
-    #         config.system_logger.debug(tmp_str)
+    #         print(tmp_str)
     #         self.chip_id = return_data[18:26]
-    #         config.system_logger.debug("Chip ID: " + self.chip_id)
+    #         print("Chip ID: " + self.chip_id)
     #         i = 34
     #         tmp_str = ""
     #         while chr(int(return_data[i] + return_data[i + 1], 16)) != "\0":
     #             tmp_str += (chr(int(return_data[i] + return_data[i + 1], 16)))
     #             i += 2
     #         self.application = tmp_str
-    #         config.system_logger.debug("Application: " + tmp_str)
+    #         print("Application: " + tmp_str)
     #         return True
     #     else:
-    #         config.system_logger.debug("Response Error:" + return_data[0])
+    #         print("Response Error:" + return_data[0])
     #         return False
 
     def command_read_base_id(self):
@@ -199,12 +198,11 @@ class SerialReader(Thread):
                 tmp_str += self.serial_data[i] + self.serial_data[i + 1]
                 i += 2
             self.base_id = tmp_str
-            config.system_logger.debug("BaseId: " + tmp_str)
+            print("BaseId: " + tmp_str)
 
             self.base_id_writes = self.serial_data[10] + self.serial_data[11]
-            #config.system_logger.debug("Base Id Writes Remaining: " + self.base_id_writes)
         else:
-            config.system_logger.debug("Error in response data:" + self.serial_data[0])
+            print("Error in response data:" + self.serial_data[0])
 
     def run(self):
         # TODO make command read version to be readable from get data directly
@@ -215,13 +213,15 @@ class SerialReader(Thread):
             self.last_message = datetime.datetime.now()
             if self.check_packet_type('01'):
                 obj_enocean = EnOcean(self.serial_data)
-                MqttClient.mqtt_client.publish(obj_enocean.get_payload())
+                payloads = obj_enocean.get_payloads()
+                for payload in payloads:
+                    self.mqtt_client.publish(payload)
             elif self.check_packet_type('02'):
                 self.parse_responde_code()
 
 
-def create_serial_reader(device):
-    serial_reader_tmp = SerialReader(device)
+def create_serial_reader(device, mqtt_client):
+    serial_reader_tmp = SerialReader(device, mqtt_client)
     serial_reader_tmp.daemon = True
     serial_reader_tmp.start()
     return serial_reader_tmp

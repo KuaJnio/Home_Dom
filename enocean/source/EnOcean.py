@@ -10,30 +10,30 @@ class EnOcean:
 
     def get_type(self):
         if self.get_rorg() == 'f6':
-            return 'BUTTON'
+            return 'HD_SWITCH'
         elif self.get_rorg() == 'a5':
             if (self.data[2:4] == '00') or (self.data[2:4] == '10'):
-                return 'TEMPERATURE'
+                return 'HD_TEMPHUM'
             else:
-                return 'OCCUPANCY'
+                return 'HD_PRESENCE'
         elif self.get_rorg() == 'd5':
-            return 'CONTACT'
+            return 'HD_CONTACT'
         elif self.get_rorg() == 'd2':
-            return 'ACTUATOR'
+            return 'HD_ACTUATOR'
         else:
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
 
     def get_id(self):
         if self.get_rorg() == 'f6':
-            return self.data[4:12]
+            return 'HD_'+self.data[4:12]
         elif self.get_rorg() == 'a5':
-            return self.data[10:18]
+            return 'HD_'+self.data[10:18]
         elif self.get_rorg() == 'd5':
-            return self.data[4:12]
+            return 'HD_'+self.data[4:12]
         elif self.get_rorg() == 'd2':
-            return
+            return 'HD_UNKNOWN'
         else:
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
 
     def get_rssi(self):
         if self.get_rorg() == 'f6':
@@ -43,9 +43,9 @@ class EnOcean:
         elif self.get_rorg() == 'd5':
             return int(self.data[24:26], 16)*(-1)
         elif self.get_rorg() == 'd2':
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
         else:
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
 
     def get_data(self):
         if self.get_rorg() == 'f6':
@@ -55,9 +55,9 @@ class EnOcean:
         elif self.get_rorg() == 'd5':
             return self.data[2:4]
         elif self.get_rorg() == 'd2':
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
         else:
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
 
     def is_teach_in(self):
         if self.get_rorg() == 'f6':
@@ -78,94 +78,80 @@ class EnOcean:
     def get_button(self):
         data = self.get_data()
         if data == '00':
-            return 'UNPRESSED'
+            return '0'
         elif data == '10':
-            return 'A1_PRESSED'
+            return '1'
         elif data == '30':
-            return 'A0_PRESSED'
+            return '2'
         elif data == '50':
-            return 'B1_PRESSED'
+            return '3'
         elif data == '70':
-            return 'B0_PRESSED'
+            return '4'
         else:
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
 
     def get_occupancy(self):
         if self.is_teach_in():
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
         if int(self.get_data()[4:6], 16) < 128:
-            return 'UNOCCUPIED'
+            return '0'
         else:
-            return 'OCCUPIED'
+            return '1'
 
     def get_supply(self):
         if self.is_teach_in():
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
         if int(self.get_data(), 16) & 1:
             return "{0:.2f}".format((int(self.get_data()[0:2], 16)*5)/250.0)
         else:
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
 
     def get_contact(self):
         if self.is_teach_in():
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
         if int(self.get_data(), 16) & 1:
-            return 'CLOSED'
+            return '1'
         else:
-            return 'OPEN'
+            return '0'
 
     def get_temp(self):
         if self.is_teach_in():
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
         if int(self.get_data(), 16) & 2:
             return "{0:.2f}".format((int(self.get_data()[4:6], 16) * 40) / 250.0)
 
     def get_hum(self):
         if self.is_teach_in():
-            return 'UNKNOWN'
+            return 'HD_UNKNOWN'
         return "{0:.2f}".format((int(self.get_data()[2:4], 16) * 100) / 250.0)
+        
+    def set_payload(self, feature, identifier, value):
+        hd_payload = json.JSONEncoder().encode({
+        "HD_FEATURE": feature,
+        "HD_IDENTIFIER": identifier,
+        "HD_VALUE": value
+        })
+        return hd_payload
 
-    def get_payload(self):
-        if self.get_type() == 'BUTTON':
-            parsed_payload = json.JSONEncoder().encode({
-                "type": self.get_type(),
-                "id": self.get_id().upper(),
-                "rssi": self.get_rssi(),
-                "value": self.get_button()
-            })
-            return parsed_payload
-        elif self.get_type() == 'OCCUPANCY':
-            parsed_payload = json.JSONEncoder().encode({
-                "type": self.get_type(),
-                "id": self.get_id().upper(),
-                "rssi": self.get_rssi(),
-                "availability": self.get_occupancy(),
-                "supplyVoltage": self.get_supply(),
-                "TeachIn": self.is_teach_in()
-            })
-            return parsed_payload
-        elif self.get_type() == 'TEMPERATURE':
-            parsed_payload = json.JSONEncoder().encode({
-                "type": self.get_type(),
-                "id": self.get_id().upper(),
-                "rssi": self.get_rssi(),
-                "temperature": self.get_temp(),
-                "humidity": self.get_hum(),
-                "TeachIn": self.is_teach_in()
-            })
-            return parsed_payload
-        elif self.get_type() == 'CONTACT':
-            parsed_payload = json.JSONEncoder().encode({
-                "type": self.get_type(),
-                "id": self.get_id().upper(),
-                "rssi": self.get_rssi(),
-                "state": self.get_contact(),
-                "TeachIn": self.is_teach_in()
-            })
-            return parsed_payload
-        else:
-            parsed_payload = json.JSONEncoder().encode({
-                "error": "incorrect payload",
-                "payload": self.data
-            })
-            return parsed_payload
+    def get_payloads(self):
+        payloads = []
+        if self.get_type() == 'HD_SWITCH':
+            if not self.get_id() == 'HD_UNKNOWN' and not self.get_button() == 'HD_UNKNOWN' and not self.is_teach_in():
+                payload = self.set_payload(self.get_type(), self.get_id(), self.get_button())
+                payloads.append(payload)   
+        elif self.get_type() == 'HD_PRESENCE':
+            if not self.get_id() == 'HD_UNKNOWN' and not self.get_occupancy() == 'HD_UNKNOWN' and not self.is_teach_in():
+                payload = self.set_payload(self.get_type(), self.get_id(), self.get_occupancy())
+                payloads.append(payload)   
+        elif self.get_type() == 'HD_TEMPHUM':
+            if not self.get_id() == 'HD_UNKNOWN' and not self.get_temp() == 'HD_UNKNOWN' and not self.is_teach_in():
+                payload = self.set_payload("HD_TEMPERATURE", self.get_id(), self.get_temp())
+                payloads.append(payload)   
+            if not self.get_id() == 'HD_UNKNOWN' and not self.get_hum() == 'HD_UNKNOWN' and not self.is_teach_in():
+                payload = self.set_payload('HD_HUMIDITY', self.get_id(), self.get_hum())
+                payloads.append(payload)   
+        elif self.get_type() == 'HD_CONTACT':
+            if not self.get_id() == 'HD_UNKNOWN' and not self.get_contact() == 'HD_UNKNOWN' and not self.is_teach_in():
+                payload = self.set_payload(self.get_type(), self.get_id(), self.get_contact())
+                payloads.append(payload)
+        return payloads

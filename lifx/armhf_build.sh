@@ -7,7 +7,7 @@ IMAGE_BASE="${REGISTRY}${ARCH}-${OS}-${NAME}-base"
 IMAGE="debian-rdt:5000/${ARCH}-${OS}-${NAME}"
 REMOTE="docker -H homedom:2375"
 DOCKERFILE="${ARCH}-${OS}-${NAME}.dockerfile"
-RUN="run -d --restart always --net host --name ${NAME} ${IMAGE}"
+RUN="run -d --restart always --net host --name ${NAME} ${IMAGE} homedom 1883"
 
 docker build --pull -t ${IMAGE} -f ${DOCKERFILE} .
 docker push ${IMAGE}

@@ -1,31 +1,27 @@
 import paho.mqtt.client as mqtt
 from threading import Thread
 from time import sleep
-import config
-
-mqtt_client = None
-
 
 def on_connect(client, userdata, flag, rc):
-    config.system_logger.debug(rc)
+    print(rc)
     if rc == 0:
-        config.system_logger.debug('Connection ok')
+        print('Connection ok')
     else:
-        config.system_logger.debug('Connection ko, connected with result code'+str(rc))
+        print('Connection ko, connected with result code'+str(rc))
 
 
 def on_disconnect(client, userdata, rc):
     if rc != 0:
-        config.system_logger.debug('Disconnected with result code' + str(rc))
+        print('Disconnected with result code' + str(rc))
         client.reconnect()
     else:
-        config.system_logger.debug("Disconnected successfully")
+        print("Disconnected successfully")
 
 
 class MqttClient(Thread):
     def __init__(self, addr, port, topic):
         Thread.__init__(self)
-        config.system_logger.debug('Initialising mqtt client')
+        print('Initialising mqtt client')
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.on_connect = on_connect
         self.addr = addr
@@ -33,25 +29,25 @@ class MqttClient(Thread):
         self.topic = topic
 
     def run(self):
-        config.system_logger.debug('Connecting to broker '+self.addr+':'+str(self.port)+'...')
+        print('Connecting to broker '+self.addr+':'+str(self.port)+'...')
         connected = False
         while not connected:
             try:
                 self.mqtt_client.connect(host=self.addr, port=self.port, keepalive=60)
                 connected = True
             except:
-                config.system_logger.debug('Error while connecting to mqtt broker '+self.addr+':'+str(self.port)+', trying again ...')
+                print('Error while connecting to mqtt broker '+self.addr+':'+str(self.port)+', trying again ...')
                 sleep(5)
 
         self.mqtt_client.loop_forever()
 
     def publish(self, message):
-        config.system_logger.debug('Publishing to broker '+self.addr+':'+str(self.port)+' in topic '+self.topic)
+        print('Publishing to broker '+self.addr+':'+str(self.port)+' in topic '+self.topic)
         rc, count = self.mqtt_client.publish(self.topic, message)
         if rc == 0:
-            config.system_logger.debug('Publish '+str(count)+' ok')
+            print('ok')
         else:
-            config.system_logger.debug('Publish '+str(count)+' ko, published with result '+self.publish_errors(rc))
+            print('ko, published with result '+self.publish_errors(rc))
 
     @staticmethod
     def publish_errors(error):

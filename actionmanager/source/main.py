@@ -5,12 +5,36 @@ from socket import error as socket_error
 import errno
 from threading import Thread
 from time import sleep
+import signal
 import json
+import sys
 
-TOPICS = ['enocean.inputs'] #topics to subscribe to
-ADDRESS = '192.168.1.100' #address of mqtt broker use for events, can be dns name
-PORT = 1883 #port of mqtt broker used for events
 
+RED = [65535, 65535, 65535, 3500]
+ORANGE = [6500, 65535, 65535, 3500]
+YELLOW = [9000, 65535, 65535, 3500]
+GREEN = [16173, 65535, 65535, 3500]
+CYAN = [29814, 65535, 65535, 3500]
+BLUE = [43634, 65535, 65535, 3500]
+PURPLE = [50486, 65535, 65535, 3500]
+PINK = [58275, 65535, 47142, 3500]
+WHITE = [58275, 0, 65535, 5500]
+COLD_WHITE = [58275, 0, 65535, 9000]
+WARM_WHITE = [58275, 0, 65535, 3200]
+GOLD = [58275, 0, 65535, 2500]
+
+
+def signal_handler(signal, frame):
+    print("Interpreted signal "+str(signal))
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
+
+TOPICS = ['sensor.inputs'] #topics to subscribe to
+BROKER = "homedom"
+PORT = 1883
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -44,7 +68,7 @@ def on_message(client, userdata, msg):
     print('MQTT >>> [TOPIC] : '+msg.topic)
     print('MQTT >>> [PAYLOAD] : '+msg.payload)
     rc = event_manager(msg.topic, msg.payload)
-    print('MQTT >>> Message handled with return code '+str(rc))
+    print('MQTT >>> Message handled with result '+str(rc))
 
 
 
@@ -64,8 +88,7 @@ class MqttClient(Thread):
         self.mqtt_client.loop_forever()
 
     def publish(self, topic, message):
-        print('MQTT >>> Publishing to broker '+self.addr+':'+str(self.port)
-        +' in topic '+topic)
+        print('MQTT >>> Publishing to broker '+self.addr+':'+str(self.port)+' in topic '+topic)
         self.mqtt_client.publish(topic, message)
 
 
@@ -76,22 +99,43 @@ def create_mqtt_client(addr, port):
     mqtt_cli_tmp.start()
     return mqtt_cli_tmp
     
-mqtt_client = create_mqtt_client(ADDRESS, PORT)
+mqtt_client = create_mqtt_client(BROKER, PORT)
 
 def event_manager(topic, payload):
-    payload_json_raw = '['+payload+']'
-    json_payload = json.loads(payload_json_raw)[0]
-    if json_payload['type'] == "BUTTON" and json_payload["value"] == "A1_PRESSED":
-        mqtt_client.publish("lifx", "on")
-    if json_payload['type'] == "BUTTON" and json_payload["value"] == "B1_PRESSED":
-        mqtt_client.publish("lifx", "on")
-    if json_payload['type'] == "BUTTON" and json_payload["value"] == "A0_PRESSED":
-        mqtt_client.publish("lifx", "off")
-    if json_payload['type'] == "BUTTON" and json_payload["value"] == "B0_PRESSED":
-        mqtt_client.publish("lifx", "off")
-    rc = 0
-    return rc
-
+    try:
+        json_payload = json.loads(payload)
+        feature = json_payload['HD_FEATURE']
+        identifier = json_payload['HD_IDENTIFIER']
+        value = json_payload['HD_VALUE']
+        if feature == "HD_SWITCH":
+            if value == "1" or value == "3":
+                lifx_payload = json.JSONEncoder().encode({
+                    "power": "on",
+                    "color": WHITE
+                })
+                mqtt_client.publish("lifx.outputs", lifx_payload)
+            elif value == "2" or value == "4":
+                lifx_payload = json.JSONEncoder().encode({
+                    "power": "off",
+                    "color": WHITE
+                })
+                mqtt_client.publish("lifx.outputs", lifx_payload)
+        elif feature == "HD_CONTACT":
+            if value == "0":
+                lifx_payload = json.JSONEncoder().encode({
+                    "power": "on",
+                    "color": GOLD
+                })
+                mqtt_client.publish("lifx.outputs", lifx_payload)
+            elif value == "1":
+                lifx_payload = json.JSONEncoder().encode({
+                    "power": "off",
+                    "color": WHITE
+                })
+                mqtt_client.publish("lifx.outputs", lifx_payload)
+        return "OK"
+    except Exception as e:
+        return str(e)
 
 def main():
     while True:
