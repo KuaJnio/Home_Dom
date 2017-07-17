@@ -1,5 +1,3 @@
-import os
-import logging
 import paho.mqtt.client as mqtt
 from socket import error as socket_error
 import errno
@@ -9,6 +7,17 @@ import signal
 import json
 import sys
 
+
+def signal_handler(signal, frame):
+    print("Interpreted signal "+str(signal)+", exiting now...")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
+
+TOPICS = ['inputs'] #topics to subscribe to
+BROKER = "homedom-armhf"
+PORT = 1883
 
 RED = [65535, 65535, 65535, 3500]
 ORANGE = [6500, 65535, 65535, 3500]
@@ -24,52 +33,36 @@ WARM_WHITE = [58275, 0, 65535, 3200]
 GOLD = [58275, 0, 65535, 2500]
 
 
-def signal_handler(signal, frame):
-    print("Interpreted signal "+str(signal))
-    sys.exit(0)
-
-
-signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGTERM, signal_handler)
-
-TOPICS = ['sensor.inputs'] #topics to subscribe to
-BROKER = "homedom"
-PORT = 1883
-
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print('MQTT >>> Connection OK')
+        print('Connection to broker OK')
     else:
-        print('MQTT >>> Connection KO, connected with result code '+str(rc))
+        print('Connection to broker KO, with result code '+str(rc))
     for topic in TOPICS:
         client.subscribe(topic)
-        print('MQTT >>> Subscribed to \"'+topic+'\"')
+        print('Subscribed to \"'+topic+'\"')
 
 
 def on_disconnect(client, userdata, rc):
-    print('MQTT >>> Disconnected with result code '+str(rc))
-
+    print('Disconnected from broker with result code '+str(rc))
     connected = False
     while not connected:
         try:
-            print('MQTT >>> Trying to reconnect...')
+            print('Trying to reconnect to broker...')
             rc = client.reconnect()
         except socket_error as serr:
-            print('MQTT >>> Error: '+str(serr.errno)+', '
-            +errno.errorcode.get(serr.errno))
+            print('Error while connecting to broker: '+str(serr.errno)+', '+errno.errorcode.get(serr.errno))
             sleep(2)
         if rc == 0:
             connected = True
 
 
 def on_message(client, userdata, msg):
-    print('MQTT')
-    print('MQTT >>> New message :')
-    print('MQTT >>> [TOPIC] : '+msg.topic)
-    print('MQTT >>> [PAYLOAD] : '+msg.payload)
+    print('New message from MQTT broker :')
+    print('[TOPIC] : '+msg.topic)
+    print('[PAYLOAD] : '+msg.payload)
     rc = event_manager(msg.topic, msg.payload)
-    print('MQTT >>> Message handled with result '+str(rc))
-
+    print('Message handled with result code '+str(rc))
 
 
 class MqttClient(Thread):
@@ -84,22 +77,79 @@ class MqttClient(Thread):
 
     def run(self):
         self.mqtt_client.connect(host=self.addr, port=self.port)
-        print('MQTT >>> Connecting to broker '+self.addr+':'+str(self.port)+'...')
+        print('Connecting to broker '+self.addr+':'+str(self.port)+'...')
         self.mqtt_client.loop_forever()
 
     def publish(self, topic, message):
-        print('MQTT >>> Publishing to broker '+self.addr+':'+str(self.port)+' in topic '+topic)
-        self.mqtt_client.publish(topic, message)
+        print('Publishing to broker '+self.addr+':'+str(self.port)+' in topic '+topic)
+        rc, count = self.mqtt_client.publish(topic, message)
+        if rc == 0:
+            print('Publish OK')
+        else:
+            print('Publish OK, with result '+self.publish_errors(rc))
+
+    @staticmethod
+    def publish_errors(error):
+        if error == -1:
+            return 'MQTT_ERR_AGAIN'
+        elif error == 0:
+            return 'MQTT_ERR_SUCCESS'
+        elif error == 1:
+            return 'MQTT_ERR_NOMEM'
+        elif error == 2:
+            return 'MQTT_ERR_PROTOCOL'
+        elif error == 3:
+            return 'MQTT_ERR_INVAL'
+        elif error == 4:
+            return 'MQTT_ERR_NO_CONN'
+        elif error == 5:
+            return 'MQTT_ERR_CONN_REFUSED'
+        elif error == 6:
+            return 'MQTT_ERR_NOT_FOUND'
+        elif error == 7:
+            return 'MQTT_ERR_CONN_LOST'
+        elif error == 8:
+            return 'MQTT_ERR_TLS'
+        elif error == 9:
+            return 'MQTT_ERR_PAYLOAD_SIZE'
+        elif error == 10:
+            return 'MQTT_ERR_NOT_SUPPORTED'
+        elif error == 11:
+            return 'MQTT_ERR_AUTH'
+        elif error == 12:
+            return 'MQTT_ERR_ACL_DENIED'
+        elif error == 13:
+            return 'MQTT_ERR_UNKNOWN'
+        elif error == 14:
+            return 'MQTT_ERR_ERRNO'
 
 
 def create_mqtt_client(addr, port):
-    print('MQTT >>> Creating mqtt client on broker : '+addr+':'+str(port))
+    print('Creating mqtt client on broker : '+addr+':'+str(port))
     mqtt_cli_tmp = MqttClient(addr, port)
     mqtt_cli_tmp.daemon = True
     mqtt_cli_tmp.start()
     return mqtt_cli_tmp
     
 mqtt_client = create_mqtt_client(BROKER, PORT)
+
+
+def send_lifx_command(power, color):
+	lifx_payload = json.JSONEncoder().encode({
+		"target": "lifx",
+		"power": power,
+		"color": color
+	})
+	mqtt_client.publish("outputs", lifx_payload)
+
+
+def send_festival_command(tts):
+	lifx_payload = json.JSONEncoder().encode({
+		"target": "festival",
+		"tts": tts
+	})
+	mqtt_client.publish("outputs", lifx_payload)
+	
 
 def event_manager(topic, payload):
     try:
@@ -109,37 +159,17 @@ def event_manager(topic, payload):
         value = json_payload['HD_VALUE']
         if feature == "HD_SWITCH":
             if value == "1" or value == "3":
-                lifx_payload = json.JSONEncoder().encode({
-                    "power": "on",
-                    "color": WHITE
-                })
-                mqtt_client.publish("lifx.outputs", lifx_payload)
+				send_lifx_command("on", GOLD)
             elif value == "2" or value == "4":
-                lifx_payload = json.JSONEncoder().encode({
-                    "power": "off",
-                    "color": WHITE
-                })
-                mqtt_client.publish("lifx.outputs", lifx_payload)
+				send_lifx_command("off", GOLD)
         elif feature == "HD_CONTACT":
             if value == "0":
-                lifx_payload = json.JSONEncoder().encode({
-                    "power": "on",
-                    "color": GOLD
-                })
-                mqtt_client.publish("lifx.outputs", lifx_payload)
+				send_festival_command("Door opened")
             elif value == "1":
-                lifx_payload = json.JSONEncoder().encode({
-                    "power": "off",
-                    "color": WHITE
-                })
-                mqtt_client.publish("lifx.outputs", lifx_payload)
+				send_festival_command("Door closed")
         return "OK"
     except Exception as e:
         return str(e)
 
-def main():
-    while True:
-        sleep(1)
-
-if __name__ == "__main__":
-    main()
+while True:
+	sleep(1)

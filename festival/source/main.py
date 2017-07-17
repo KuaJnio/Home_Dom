@@ -3,10 +3,10 @@ from socket import error as socket_error
 import errno
 from threading import Thread
 from time import sleep
-import lifxlan
 import sys
 import signal
 import json
+import os
 
 
 def signal_handler(signal, frame):
@@ -19,9 +19,6 @@ signal.signal(signal.SIGTERM, signal_handler)
 TOPICS = ['outputs'] #topics to subscribe to
 BROKER = "homedom-armhf"
 PORT = 1883
-
-IP = "192.168.1.33"
-MAC = "d0:73:d5:21:89:a6"
 
 
 def on_connect(client, userdata, flags, rc):
@@ -54,7 +51,6 @@ def on_message(client, userdata, msg):
     print('[PAYLOAD] : '+msg.payload)
     rc = event_manager(msg.topic, msg.payload)
     print('Message handled with result code '+str(rc))
-
 
 
 class MqttClient(Thread):
@@ -128,27 +124,12 @@ mqtt_client = create_mqtt_client(BROKER, PORT)
 
 def event_manager(topic, payload):
     try:
-        def turnOnLampWithLifx(lifxcolor):
-            bulb = lifxlan.Light(MAC, IP)
-            bulb.set_color(lifxcolor)
-            bulb.set_power("on")
-
-
-        def turnOffLampWithLifx():
-            bulb = lifxlan.Light(MAC, IP)
-            bulb.set_power("off")
-            
-            
         json_payload = json.loads(payload)
-        target=json_payload['target']
-        if target == "lifx":
-			power=json_payload['power']
-			color=json_payload['color']
-
-			if power == "on":
-				turnOnLampWithLifx(color)
-			elif power == "off":
-				turnOffLampWithLifx()
+        target = json_payload['target']
+        if target == 'festival':
+			tts = json_payload['tts']
+			print tts
+			os.system("echo '"+tts+"'  | festival --tts")
     except Exception as e:
         return str(e)
 

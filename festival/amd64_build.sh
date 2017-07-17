@@ -1,13 +1,13 @@
 #!/bin/bash
 
-NAME="lifx"
+NAME="festival"
 ARCH="amd64"
 TARGET="homedom-${ARCH}"
 REGISTRY="registry:5000"
 IMAGE="${REGISTRY}/${ARCH}-${NAME}"
 REMOTE="docker -H ${TARGET}:2375"
 DOCKERFILE="${ARCH}-${NAME}.dockerfile"
-RUN="run -d --restart always --net host --name ${NAME} ${IMAGE}"
+RUN="run -d --restart always --device /dev/snd --name ${NAME} ${IMAGE} homedom-armhf 1883"
 
 docker build --pull -t ${IMAGE} -f ${DOCKERFILE} .
 docker push ${IMAGE}

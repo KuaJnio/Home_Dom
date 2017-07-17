@@ -215,7 +215,7 @@ class SerialReader(Thread):
                 obj_enocean = EnOcean(self.serial_data)
                 payloads = obj_enocean.get_payloads()
                 for payload in payloads:
-                    self.mqtt_client.publish(payload)
+                    self.mqtt_client.publish("inputs", payload)
             elif self.check_packet_type('02'):
                 self.parse_responde_code()
 

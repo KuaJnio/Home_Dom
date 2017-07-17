@@ -16,7 +16,6 @@ function deploy {
 	${REMOTE} rm -f ${NAME}
 	${REMOTE} pull ${IMAGE}
 	${REMOTE} ${RUN}
-	${REMOTE} logs -f ${NAME}
 }  
 
 #deploy
