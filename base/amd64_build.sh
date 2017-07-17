@@ -4,5 +4,5 @@ ARCH="amd64"
 IMAGE="${REGISTRY}/${ARCH}-base"
 DOCKERFILE="${ARCH}-base.dockerfile"
 
-docker build -t ${IMAGE} -f ${DOCKERFILE} .
+docker build --pull -t ${IMAGE} -f ${DOCKERFILE} .
 docker push ${IMAGE}

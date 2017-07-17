@@ -1,3 +1,3 @@
 FROM resin/rpi-raspbian 
 
-RUN apt-get update; apt-get install -y python-pip
+RUN apt-get update; apt-get install -y python-pip mosquitto festival; pip install paho-mqtt; pip install pyserial; pip install lifxlan
