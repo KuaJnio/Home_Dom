@@ -2,15 +2,8 @@
 
 NAME="enocean"
 ARCH="amd64"
-
+TARGET="homedom-${ARCH}"
 REGISTRY="registry:5000"
-if [ "${ARCH}" == "amd64" ]
-then
-  TARGET="homedom-server"
-elif [ "${ARCH}" == "armhf" ]
-then
-  TARGET="homedom"
-fi
 IMAGE="${REGISTRY}/${ARCH}-${NAME}"
 REMOTE="docker -H ${TARGET}:2375"
 DOCKERFILE="${ARCH}-${NAME}.dockerfile"
