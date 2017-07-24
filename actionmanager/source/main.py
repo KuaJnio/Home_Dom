@@ -164,9 +164,9 @@ def event_manager(topic, payload):
 				send_lifx_command("off", GOLD)
         elif feature == "HD_CONTACT":
             if value == "0":
-				send_hometts_command("Door opened")
+				send_hometts_command("Porte ouverte")
             elif value == "1":
-				send_hometts_command("Door closed")
+				send_hometts_command("Porte fermée")
         return "OK"
     except Exception as e:
         return str(e)
