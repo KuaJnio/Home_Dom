@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NAME="festival"
+NAME="hometts"
 ARCH="armhf"
 TARGET="homedom-${ARCH}"
 REGISTRY="registry:5000"

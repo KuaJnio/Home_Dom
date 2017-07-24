@@ -135,20 +135,20 @@ mqtt_client = create_mqtt_client(BROKER, PORT)
 
 
 def send_lifx_command(power, color):
-	lifx_payload = json.JSONEncoder().encode({
+	payload = json.JSONEncoder().encode({
 		"target": "lifx",
 		"power": power,
 		"color": color
 	})
-	mqtt_client.publish("outputs", lifx_payload)
+	mqtt_client.publish("outputs", payload)
 
 
-def send_festival_command(tts):
-	lifx_payload = json.JSONEncoder().encode({
-		"target": "festival",
+def send_hometts_command(tts):
+	payload = json.JSONEncoder().encode({
+		"target": "hometts",
 		"tts": tts
 	})
-	mqtt_client.publish("outputs", lifx_payload)
+	mqtt_client.publish("outputs", payload)
 	
 
 def event_manager(topic, payload):
@@ -164,9 +164,9 @@ def event_manager(topic, payload):
 				send_lifx_command("off", GOLD)
         elif feature == "HD_CONTACT":
             if value == "0":
-				send_festival_command("Door opened")
+				send_hometts_command("Door opened")
             elif value == "1":
-				send_festival_command("Door closed")
+				send_hometts_command("Door closed")
         return "OK"
     except Exception as e:
         return str(e)

@@ -126,10 +126,10 @@ def event_manager(topic, payload):
     try:
         json_payload = json.loads(payload)
         target = json_payload['target']
-        if target == 'festival':
+        if target == 'hometts':
 			tts = json_payload['tts']
 			print tts
-			os.system("echo '"+tts+"'  | festival --tts")
+			os.system("/usr/bin/mpg123 'http://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q='+tts+'&tl=fr' > /dev/null 2>&1 &")
     except Exception as e:
         return str(e)
 
