@@ -166,7 +166,11 @@ def event_manager(topic, payload):
             if value == "0":
 				send_hometts_command("Porte ouverte")
             elif value == "1":
-				send_hometts_command("Porte fermée")
+				send_hometts_command("Porte fermer")
+        elif feature == "HD_TEMPERATURE":
+			send_hometts_command("Il fait "+value+" degrer")
+        elif feature == "HD_HUMIDITY":
+			send_hometts_command("Lumiditer est de "+value+" pourcent")
         return "OK"
     except Exception as e:
         return str(e)

@@ -1,13 +1,14 @@
 import paho.mqtt.client as mqtt
 from socket import error as socket_error
 import errno
-from threading import Thread
+from threading import Thread, Lock
 from time import sleep
 import sys
 import signal
 import json
 import os
 
+tts_lock = Lock()
 
 def signal_handler(signal, frame):
     print("Interpreted signal "+str(signal)+", exiting now...")
@@ -128,8 +129,10 @@ def event_manager(topic, payload):
         target = json_payload['target']
         if target == 'hometts':
 			tts = json_payload['tts']
-			print tts
-			os.system("/usr/bin/mpg123 'http://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q='+tts+'&tl=fr' > /dev/null 2>&1 &")
+			tts_lock.acquire()
+			print "/usr/bin/mpg123 'http://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q="+tts+"&tl=fr' > /dev/null 2>&1"
+			os.system("/usr/bin/mpg123 'http://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q="+tts+"&tl=fr' > /dev/null 2>&1")
+			tts_lock.release()
     except Exception as e:
         return str(e)
 
