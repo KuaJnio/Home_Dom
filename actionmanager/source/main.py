@@ -149,7 +149,7 @@ def send_hometts_command(tts):
 		"tts": tts
 	})
 	mqtt_client.publish("outputs", payload)
-	
+
 
 def event_manager(topic, payload):
     try:
@@ -168,9 +168,9 @@ def event_manager(topic, payload):
             elif value == "1":
 				send_hometts_command("Porte fermer")
         elif feature == "HD_TEMPERATURE":
-			send_hometts_command("Il fait "+value+" degrer")
+			send_hometts_command("Il fait "+value[0:2]+" degrer")
         elif feature == "HD_HUMIDITY":
-			send_hometts_command("Lumiditer est de "+value+" pourcent")
+			send_hometts_command("Lumiditer est de "+value[0:2]+" pourcent")
         return "OK"
     except Exception as e:
         return str(e)
