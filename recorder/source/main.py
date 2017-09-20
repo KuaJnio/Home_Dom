@@ -4,7 +4,7 @@ import errno
 from threading import Thread
 from influxdb import InfluxDBClient
 import signal
-import time
+from time import sleep
 import json
 
 
@@ -18,10 +18,10 @@ signal.signal(signal.SIGTERM, signal_handler)
 TOPICS = ["inputs"] #topics to subscribe to
 BROKER = "homedom-armhf"
 PORT = 1883
-INFLUX_HOST="127.0.0.1"
+INFLUX_HOST="homedom-armhf"
 INFLUX_PORT=8086
 INFLUX_USER="root"
-INFLUX_PASSWD="romain"
+INFLUX_PASSWD="root"
 INFLUX_DATABASE="homedom"
 
 influxdb_client = InfluxDBClient(host=INFLUX_HOST, port=INFLUX_PORT, username=INFLUX_USER, password=INFLUX_PASSWD, database=INFLUX_DATABASE)
