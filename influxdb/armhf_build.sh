@@ -2,7 +2,7 @@
 
 NAME="influxdb"
 ARCH="armhf"
-TARGET="homedom-${ARCH}"
+TARGET="homedom-${ARCH}-touch"
 REGISTRY="registry:5000"
 IMAGE="${REGISTRY}/${ARCH}-${NAME}"
 REMOTE="docker -H ${TARGET}:2375"
