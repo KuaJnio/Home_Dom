@@ -16,16 +16,16 @@ signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 TOPICS = ["inputs"] #topics to subscribe to
-BROKER = "homedom-armhf-touch"
+BROKER = "192.168.1.20"
 PORT = 1883
-BROKER = "homedom-armhf-touch"
+BROKER = "192.168.1.20"
 INFLUX_PORT=8086
 INFLUX_USER="root"
 INFLUX_PASSWD="root"
 INFLUX_DATABASE="homedom"
 
 influxdb_client = InfluxDBClient(host=INFLUX_HOST, port=INFLUX_PORT, username=INFLUX_USER, password=INFLUX_PASSWD, database=INFLUX_DATABASE)
-    
+
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
