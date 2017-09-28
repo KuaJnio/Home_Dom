@@ -18,7 +18,7 @@ signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 TOPICS = ['outputs'] #topics to subscribe to
-BROKER = "homedom-armhf"
+BROKER = "homedom-armhf-touch"
 PORT = 1883
 
 

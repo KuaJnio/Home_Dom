@@ -16,9 +16,9 @@ signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 TOPICS = ["inputs"] #topics to subscribe to
-BROKER = "homedom-armhf"
+BROKER = "homedom-armhf-touch"
 PORT = 1883
-INFLUX_HOST="homedom-armhf"
+BROKER = "homedom-armhf-touch"
 INFLUX_PORT=8086
 INFLUX_USER="root"
 INFLUX_PASSWD="root"

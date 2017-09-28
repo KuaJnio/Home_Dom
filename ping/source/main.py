@@ -3,9 +3,9 @@ from socket import error as socket_error
 import errno
 from threading import Thread
 from time import sleep
+import sys
 import signal
 import json
-import sys
 
 
 def signal_handler(signal, frame):
@@ -15,22 +15,12 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
-TOPICS = ['inputs'] #topics to subscribe to
+TOPICS = [] #topics to subscribe to
 BROKER = "homedom-armhf-touch"
 PORT = 1883
 
-RED = [65535, 65535, 65535, 3500]
-ORANGE = [6500, 65535, 65535, 3500]
-YELLOW = [9000, 65535, 65535, 3500]
-GREEN = [16173, 65535, 65535, 3500]
-CYAN = [29814, 65535, 65535, 3500]
-BLUE = [43634, 65535, 65535, 3500]
-PURPLE = [50486, 65535, 65535, 3500]
-PINK = [58275, 65535, 47142, 3500]
-WHITE = [58275, 0, 65535, 5500]
-COLD_WHITE = [58275, 0, 65535, 9000]
-WARM_WHITE = [58275, 0, 65535, 3200]
-GOLD = [58275, 0, 65535, 2500]
+IP = "192.168.1.33"
+MAC = "d0:73:d5:21:89:a6"
 
 
 def on_connect(client, userdata, flags, rc):
@@ -63,6 +53,7 @@ def on_message(client, userdata, msg):
     print('[PAYLOAD] : '+msg.payload)
     rc = event_manager(msg.topic, msg.payload)
     print('Message handled with result code '+str(rc))
+
 
 
 class MqttClient(Thread):
@@ -134,44 +125,29 @@ def create_mqtt_client(addr, port):
 mqtt_client = create_mqtt_client(BROKER, PORT)
 
 
-def send_lifx_command(power, color):
-	payload = json.JSONEncoder().encode({
-		"target": "lifx",
-		"power": power,
-		"color": color
-	})
-	mqtt_client.publish("outputs", payload)
-
-
-def send_hometts_command(tts):
-	payload = json.JSONEncoder().encode({
-		"target": "hometts",
-		"tts": tts
-	})
-	mqtt_client.publish("outputs", payload)
-
-
 def event_manager(topic, payload):
     try:
+        def turnOnLampWithLifx(lifxcolor):
+            bulb = lifxlan.Light(MAC, IP)
+            bulb.set_color(lifxcolor)
+            bulb.set_power("on")
+
+
+        def turnOffLampWithLifx():
+            bulb = lifxlan.Light(MAC, IP)
+            bulb.set_power("off")
+            
+            
         json_payload = json.loads(payload)
-        feature = json_payload['HD_FEATURE']
-        identifier = json_payload['HD_IDENTIFIER']
-        value = json_payload['HD_VALUE']
-        if feature == "HD_SWITCH":
-            if value == "1" or value == "3":
-				send_lifx_command("on", GOLD)
-            elif value == "2" or value == "4":
-				send_lifx_command("off", GOLD)
-        elif feature == "HD_CONTACT":
-            if value == "0":
-				send_hometts_command("Porte ouverte")
-            elif value == "1":
-				send_hometts_command("Porte fermer")
-        elif feature == "HD_TEMPERATURE":
-			send_hometts_command("Il fait "+value[0:2]+" degrer")
-        elif feature == "HD_HUMIDITY":
-			send_hometts_command("Lumiditer est de "+value[0:2]+" pourcent")
-        return "OK"
+        target=json_payload['target']
+        if target == "lifx":
+			power=json_payload['power']
+			color=json_payload['color']
+
+			if power == "on":
+				turnOnLampWithLifx(color)
+			elif power == "off":
+				turnOffLampWithLifx()
     except Exception as e:
         return str(e)
 
