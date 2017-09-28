@@ -18,7 +18,7 @@ signal.signal(signal.SIGTERM, signal_handler)
 TOPICS = ["inputs"] #topics to subscribe to
 BROKER = "192.168.1.20"
 PORT = 1883
-BROKER = "192.168.1.20"
+INFLUX_HOST = "192.168.1.20"
 INFLUX_PORT=8086
 INFLUX_USER="root"
 INFLUX_PASSWD="root"
