@@ -132,12 +132,12 @@ def set_payload(value):
 while True:
 	try:
 		ping = os.popen('ping www.google.com -c 1')
-		res = ping.readlines()
-		index = res[1].find('time=')
-		res = res[1][80:]
-		index = res.find(' ')
-		res = res[:index]
-		res = float(res)
+		res0 = ping.readlines()
+		index0 = res0[1].find('time=')
+		res1 = res0[1][index0+5:]
+		index1 = res1.find(' ')
+		res2 = res1[:index1]
+		res = float(res2)
 		if (res > 0) and (res < 1000):
 			payload = set_payload(res)
 			mqtt_client.publish("inputs", payload)
