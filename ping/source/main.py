@@ -137,7 +137,7 @@ while True:
 		res = res[1][80:]
 		index = res.find(' ')
 		res = res[:index]
-		res = int(res)
+		res = float(res)
 		if (res > 0) and (res < 1000):
 			payload = set_payload(res)
 			mqtt_client.publish("inputs", payload)
