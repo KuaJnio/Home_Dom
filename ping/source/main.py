@@ -137,8 +137,14 @@ while True:
 		res = res[1][80:]
 		index = res.find(' ')
 		res = res[:index]
-		payload = set_payload(res)
-		mqtt_client.publish("inputs", payload)
+		res = int(res)
+		if (res > 0) and (res < 1000):
+			payload = set_payload(res)
+			mqtt_client.publish("inputs", payload)
+		elif res > 1000:
+			payload = set_payload(1000)
+			mqtt_client.publish("inputs", payload)
+			
 	except Exception as e:
 		print('Error '+str(e)+' in main')
-	sleep(3)
+	sleep(5)
