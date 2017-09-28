@@ -6,6 +6,7 @@ from time import sleep
 import sys
 import signal
 import json
+import os
 
 
 def signal_handler(signal, frame):
@@ -18,9 +19,6 @@ signal.signal(signal.SIGTERM, signal_handler)
 TOPICS = [] #topics to subscribe to
 BROKER = "192.168.1.20"
 PORT = 1883
-
-IP = "192.168.1.33"
-MAC = "d0:73:d5:21:89:a6"
 
 
 def on_connect(client, userdata, flags, rc):
@@ -53,7 +51,6 @@ def on_message(client, userdata, msg):
     print('[PAYLOAD] : '+msg.payload)
     rc = event_manager(msg.topic, msg.payload)
     print('Message handled with result code '+str(rc))
-
 
 
 class MqttClient(Thread):
@@ -124,32 +121,24 @@ def create_mqtt_client(addr, port):
     
 mqtt_client = create_mqtt_client(BROKER, PORT)
 
-
-def event_manager(topic, payload):
-    try:
-        def turnOnLampWithLifx(lifxcolor):
-            bulb = lifxlan.Light(MAC, IP)
-            bulb.set_color(lifxcolor)
-            bulb.set_power("on")
-
-
-        def turnOffLampWithLifx():
-            bulb = lifxlan.Light(MAC, IP)
-            bulb.set_power("off")
-            
-            
-        json_payload = json.loads(payload)
-        target=json_payload['target']
-        if target == "lifx":
-			power=json_payload['power']
-			color=json_payload['color']
-
-			if power == "on":
-				turnOnLampWithLifx(color)
-			elif power == "off":
-				turnOffLampWithLifx()
-    except Exception as e:
-        return str(e)
+def set_payload(value):
+	hd_payload = json.JSONEncoder().encode({
+	"HD_FEATURE": "HD_PING",
+	"HD_IDENTIFIER": "HD_ARMHFTOUCH",
+	"HD_VALUE": value
+	})
+	return hd_payload
 
 while True:
-	sleep(1)
+	try:
+		ping = os.popen('ping www.google.com -c 1')
+		res = ping.readlines()
+		index = res[1].find('time=')
+		res = res[1][80:]
+		index = res.find(' ')
+		res = res[:index]
+		payload = set_payload(res)
+		mqtt_client.publish("inputs", payload)
+	except Exception as e:
+		print('Error '+str(e)+' in main')
+	sleep(3)
