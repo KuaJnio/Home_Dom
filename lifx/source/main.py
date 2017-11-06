@@ -17,11 +17,11 @@ signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 TOPICS = ['outputs'] #topics to subscribe to
-BROKER = "192.168.1.20"
-PORT = 1883
+BROKER = sys.argv[1]
+PORT = sys.argv[2]
 
-IP = "192.168.1.33"
-MAC = "d0:73:d5:21:89:a6"
+IP = sys.argv[3]
+MAC = sys.argv[4]
 
 
 def on_connect(client, userdata, flags, rc):
@@ -65,7 +65,7 @@ class MqttClient(Thread):
         self.mqtt_client.on_disconnect = on_disconnect
         self.mqtt_client.on_message = on_message
         self.addr = addr
-        self.port = port
+        self.port = int(port)
 
     def run(self):
         self.mqtt_client.connect(host=self.addr, port=self.port)

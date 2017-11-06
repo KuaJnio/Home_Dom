@@ -6,6 +6,7 @@ from influxdb import InfluxDBClient
 import signal
 from time import sleep
 import json
+import sys
 
 
 def signal_handler(signal, frame):
@@ -16,15 +17,16 @@ signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 TOPICS = ["inputs"] #topics to subscribe to
-BROKER = "192.168.1.20"
-PORT = 1883
-INFLUX_HOST = "192.168.1.20"
-INFLUX_PORT=8086
-INFLUX_USER="root"
-INFLUX_PASSWD="root"
-INFLUX_DATABASE="homedom"
+BROKER = sys.argv[1]
+PORT = sys.argv[2]
 
-influxdb_client = InfluxDBClient(host=INFLUX_HOST, port=INFLUX_PORT, username=INFLUX_USER, password=INFLUX_PASSWD, database=INFLUX_DATABASE)
+INFLUX_HOST = sys.argv[3]
+INFLUX_PORT = sys.argv[4]
+INFLUX_USER = sys.argv[5]
+INFLUX_PASSWD = sys.argv[6]
+INFLUX_DATABASE = sys.argv[7]
+
+influxdb_client = InfluxDBClient(host=INFLUX_HOST, port=int(INFLUX_PORT), username=INFLUX_USER, password=INFLUX_PASSWD, database=INFLUX_DATABASE)
 
 
 def on_connect(client, userdata, flags, rc):
@@ -65,7 +67,7 @@ class MqttClient(Thread):
         self.mqtt_client.on_disconnect = on_disconnect
         self.mqtt_client.on_message = on_message
         self.addr = addr
-        self.port = port
+        self.port = int(port)
 
     def run(self):
         self.mqtt_client.connect(host=self.addr, port=self.port)

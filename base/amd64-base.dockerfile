@@ -1,3 +1,0 @@
-FROM debian
-
-RUN apt-get update; apt-get install -y python-pip mosquitto mpg123 alsa-utils iputils-ping; pip install paho-mqtt; pip install pyserial; pip install lifxlan; pip install influxdb
