@@ -15,4 +15,4 @@ docker push ${IMAGE}
 
 ${REMOTE} rm -f ${NAME}
 ${REMOTE} pull ${IMAGE}
-${REMOTE} ${RUN}
+#${REMOTE} ${RUN}

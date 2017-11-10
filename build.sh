@@ -6,3 +6,9 @@ cd enocean && ./build.sh && cd ..
 cd lifx && ./build.sh && cd ..
 cd hometts && ./build.sh && cd ..
 cd recorder && ./build.sh && cd ..
+cd ping && ./build.sh && cd ..
+cd cep && ./build.sh && cd ..
+
+docker rmi $(docker images | grep "<none>" | awk '{print $3}')
+
+ssh pi@homedom-armhf-touch docker rmi $(docker images | grep "<none>" | awk '{print $3}')
