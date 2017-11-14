@@ -158,19 +158,19 @@ def event_manager(topic, payload):
         identifier = json_payload['HD_IDENTIFIER']
         value = json_payload['HD_VALUE']
         if feature == "HD_SWITCH":
-            if value == "1" or value == "3":
+            if value == 1 or value == 3:
 				send_lifx_command("on", GOLD)
-            elif value == "2" or value == "4":
+            elif value == 2 or value == 4:
 				send_lifx_command("off", GOLD)
         elif feature == "HD_CONTACT":
-            if value == "0":
+            if value == 0:
 				send_hometts_command("Porte ouverte")
-            elif value == "1":
+            elif value == 1:
 				send_hometts_command("Porte fermer")
         elif feature == "HD_TEMPERATURE":
-			send_hometts_command("Il fait "+value[0:2]+" degrer")
+			send_hometts_command("Il fait "+str(value)+" degrer")
         elif feature == "HD_HUMIDITY":
-			send_hometts_command("Lumiditer est de "+value[0:2]+" pourcent")
+			send_hometts_command("Lumiditer est de "+str(value)+" pourcent")
         return "OK"
     except Exception as e:
         return str(e)

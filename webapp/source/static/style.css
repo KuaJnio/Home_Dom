@@ -1,125 +1,132 @@
-* {
-	margin:0;
-	padding:0;
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr,
+acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong,
+sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table,
+caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure,
+figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
 }
 
-input {
-	border-radius: 0;
-	-webkit-appearance: none;
-	-webkit-border-radius:0px
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+    display: block;
 }
 
-html,body {
-	width: 800px;
-	margin: 0 auto;
-	background-image:url('/static/img/squared_metal.png');
+body {
+    line-height: 1;
 }
 
-.menu {
-	width : 800px;
-	list-style-type : none;
-	background-color: #D8D8D8;
-	height:50px;
-	line-height:50px;
-	font-size: 30px;
-	background-image:url('/static/img/cream_pixels.png');
-	cursor:default;
+ol, ul {
+    list-style: none;
 }
 
-.menu li {
-	float : left;
-	text-align:center;
-	width : 200px;
+blockquote, q {
+    quotes: none;
 }
 
-.menu a {
-	color : black;
-	text-decoration : none;
+blockquote:before, blockquote:after, q:before, q:after {
+    content: '';
+    content: none;
 }
 
-.menu:hover .menu li:hover, .menu a:hover {
-	cursor:default;
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
-.bloc_meteo, .bloc_relay {
-	margin-top:10px;
-	//margin-left:3px;
-	width:395px;
-	float: left;
+html {
+    background-color: black;
+    font-size: 10px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 500;
+	font-family: Avantgarde, sans-serif;
 }
 
-.bloc_contact, .bloc_lifx {
-	margin-top:10px;
-	//margin-right:3px;
-	width:395px;
-	float: right;
+body {
+    margin-left: auto;
+    margin-right: auto;
+    width: 800px;
 }
 
-.meteo_title, .meteo_rssi, .meteo_date, .contact_title, .contact_rssi, .contact_date, .relay_title, .relay_rssi, .relay_date, .contact_contact, .lifx_title, .lifx_color, .lifx_intensity  {
-	width:395px;
-	height:45px;
-	float: left;
-	margin-top:3px;
-	background-image:url('/static/img/dark_embroidery.png');
-	color: white;
-	font-size: 25px;
+header {
+    display: inline-block;
+    width: 800px;
+    color:white;
+    background-image: url("img/stressed_linen.png");
+    height: 80px;
+    border-radius: 5px;
 }
 
-.meteo_temperature, .relay_channel_1, .lifx_on, .lifx_color_r, .lifx_color_b {
-	width:195px;
-	float: left;
-	margin-top:3px;
-	height:45px;
-	background-image:url('/static/img/dark_embroidery.png');
-	color: white;
-	font-size: 25px;
+header h1 {
+    display:inline;
+    font-weight: bold;
+    margin-left: 50px;
+    line-height: 80px;
+    font-size: 40px;
+    color:white;
 }
 
-.meteo_humidity, .relay_channel_2, .lifx_off, .lifx_color_g, .lifx_intensity  {
-	width:195px;
-	float:right;
-	margin-top:3px;
-	height:45px;
-	background-image:url('/static/img/dark_embroidery.png');
-	color: white;
-	font-size: 25px;
+header h1 a {
+    text-decoration: none;
+    color:white;
 }
 
-input[type=range]{
-	-webkit-appearance: none;
+nav {
+    list-style: none;
+    float:right;
+    display:inline;
+    text-decoration: none;
+    margin-right: 10px;
 }
 
-input[type=range]::-webkit-slider-runnable-track {
-	height: 5px;
-	background: #ddd;
-	border: none;
+nav li {
+    display:inline-block;
+    list-style-type: none;
+    font-weight: bold;
+    font-size: 20px;
+    line-height:80px;
+    margin-right: 20px;
+    color:white;
 }
 
-input[type=range]::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	border: none;
-	height: 45px;
-	width: 20px;
-	margin-top: -20px;
-	border-radius:10%;
+.bloc {
+	background-color: lightgray;
+	margin-left: 4px;
+	margin-top: 4px;
+	display: inline-block;
+    width: 195px;
+    height: 195px;
+    float: left;
+    border-radius: 5px;
+    text-align: center;
+    background-image: url("img/ravenna.png");
 }
 
-input[type=range][class=lifx_color_r]::-webkit-slider-thumb {
-	background: #CC1919;
+.bloc .buttons {
+	border-radius: 5px;
+	margin-top: 7px;
 }
 
-input[type=range][class=lifx_color_g]::-webkit-slider-thumb {
-	background: #1AA53B;
+.bloc .title {
+	font-size:35px;
+	margin-top: 10px;
+	font-weight: bold;
+	color: #444;
+	letter-spacing: -2px;
 }
 
-input[type=range][class=lifx_color_b]::-webkit-slider-thumb {
-	background: #1A8BD1;
+button {
+    width: 80px;
+    height: 80px;
+    color: black;
+    border-radius: 5px;
+	margin-left: 5px;
+	font-size:30px;
+	font-weight: bold;
 }
 
-input[type=range][class=lifx_intensity]::-webkit-slider-thumb {
-	background: #F5F5F5;
-}
-
-input:focus {
-	outline: none;
-}

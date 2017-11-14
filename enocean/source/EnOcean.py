@@ -137,21 +137,21 @@ class EnOcean:
         payloads = []
         if self.get_type() == 'HD_SWITCH':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_button() == 'HD_UNKNOWN' and not self.is_teach_in():
-                payload = self.set_payload(self.get_type(), self.get_id(), self.get_button())
-                payloads.append(payload)   
+                payload = self.set_payload(self.get_type(), self.get_id(), int(self.get_button()))
+                payloads.append(payload)
         elif self.get_type() == 'HD_PRESENCE':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_occupancy() == 'HD_UNKNOWN' and not self.is_teach_in():
-                payload = self.set_payload(self.get_type(), self.get_id(), self.get_occupancy())
+                payload = self.set_payload(self.get_type(), self.get_id(), int(self.get_occupancy()))
                 payloads.append(payload)   
         elif self.get_type() == 'HD_TEMPHUM':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_temp() == 'HD_UNKNOWN' and not self.is_teach_in():
-                payload = self.set_payload("HD_TEMPERATURE", self.get_id(), self.get_temp())
+                payload = self.set_payload("HD_TEMPERATURE", self.get_id(), float(self.get_temp()))
                 payloads.append(payload)   
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_hum() == 'HD_UNKNOWN' and not self.is_teach_in():
-                payload = self.set_payload('HD_HUMIDITY', self.get_id(), self.get_hum())
+                payload = self.set_payload('HD_HUMIDITY', self.get_id(), float(self.get_hum()))
                 payloads.append(payload)   
         elif self.get_type() == 'HD_CONTACT':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_contact() == 'HD_UNKNOWN' and not self.is_teach_in():
-                payload = self.set_payload(self.get_type(), self.get_id(), self.get_contact())
+                payload = self.set_payload(self.get_type(), self.get_id(), int(self.get_contact()))
                 payloads.append(payload)
         return payloads

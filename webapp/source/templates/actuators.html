@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>HOME_DOM</title>
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <header>
+            <h1><a href="{{ url_for('home') }}">HOME_DOM</a></h1>
+            <nav>
+                <ul>
+                    <a href="{{ url_for('home') }}"><li>GRAFANA</li></a>
+                    <a href="{{ url_for('actuators') }}"><li>ACTUATORS</li></a>
+                    <a href=""><li>CEP</li></a>
+                </ul>
+            </nav>
+        </header>
+        <section>
+			<div class="bloc">
+				<div class="title">LAMPE</div>
+				<div class="title">BUREAU</div>
+				<div class="buttons">
+					<button>ON</button>
+					<button>OFF</button>
+				</div>
+			</div>
+			<div class="bloc">
+				<div class="title">LAMPE</div>
+				<div class="title">CHAMBRE</div>
+				<div class="buttons">
+					<button>ON</button>
+					<button>OFF</button>
+				</div>
+			</div>
+			<div class="bloc">
+				<div class="title">LAMPE</div>
+				<div class="title">SALON</div>
+				<div class="buttons">
+					<button>ON</button>
+					<button>OFF</button>
+				</div>
+			</div>
+			<div class="bloc">
+				<div class="title">LAMPE</div>
+				<div class="title">CUISINE</div>
+				<div class="buttons">
+					<button>ON</button>
+					<button>OFF</button>
+				</div>
+			</div>
+			<div class="bloc">
+				<div class="title">LAMPE</div>
+				<div class="title">SDB</div>
+				<div class="buttons">
+					<button>ON</button>
+					<button>OFF</button>
+				</div>
+			</div>
+        </section>
+    </body>
+</html>
+
