@@ -13,4 +13,3 @@ cd webapp && ./build.sh && cd ..
 docker rmi $(docker images | grep "<none>" | awk '{print $3}')
 
 ssh pi@homedom-armhf-touch /home/pi/clean.sh
-
