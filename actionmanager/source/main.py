@@ -12,7 +12,6 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
-
 MQTT_BROKER = sys.argv[1]
 MQTT_PORT = sys.argv[2]
 MQTT_TOPICS = sys.argv[3].split(',')

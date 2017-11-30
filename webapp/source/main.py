@@ -40,10 +40,8 @@ def signal_term_handler(signal, frame):
 def main():
     try:
         signal.signal(signal.SIGTERM, signal_term_handler)
-
         print("Initializing server...")
         app.run(host='0.0.0.0', port=80, debug=True)
-
     except Exception as e:
         print('Error in main: '+str(e))
     while True:
