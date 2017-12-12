@@ -13,6 +13,6 @@ RUN="run -d --restart always --net host --name ${NAME} ${IMAGE} $MQTT_BROKER_IP 
 docker build --no-cache --pull -t ${IMAGE} .
 docker push ${IMAGE}
 
-${REMOTE} rm -f ${NAME}
-${REMOTE} pull ${IMAGE}
-${REMOTE} ${RUN}
+#${REMOTE} rm -f ${NAME}
+#${REMOTE} pull ${IMAGE}
+#${REMOTE} ${RUN}

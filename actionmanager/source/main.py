@@ -36,8 +36,8 @@ def on_message(client, userdata, msg):
     print('New message from MQTT broker :')
     print('[TOPIC] : '+msg.topic)
     print('[PAYLOAD] : '+msg.payload)
-    rc = event_manager(msg.topic, msg.payload)
-    print('Message handled with result code '+str(rc))
+    #rc = event_manager(msg.topic, msg.payload)
+    #print('Message handled with result code '+str(rc))
 
 
 def send_lifx_command(power, color):
