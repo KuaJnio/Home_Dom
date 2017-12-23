@@ -98,7 +98,7 @@ class SerialReader(Thread):
             return False
 
     def check_packet_type(self, x):
-        if self.packet_type == x:  # x is 'x'
+        if self.packet_type == x:
             return True
         else:
             return False
@@ -161,31 +161,6 @@ class SerialReader(Thread):
             p_esp3packet[index] = chr(p_esp3packet[index])
             self.ser.write(p_esp3packet[index])
 
-    # def command_read_version(self):
-    #     return_data = self.send_esp3packet(0x05, [0x03])
-    #     if int(return_data[0:1], 16) == 0x00:
-    #         self.app_version = str(int(return_data[2:4], 16)) + '.' + str(int(return_data[4:6], 16)) \
-    #                            + '.' + str(int(return_data[6:8], 16)) + '.' + str(int(return_data[8:10], 16))
-    #         tmp_str = "Application Version: " + self.app_version
-    #         print(tmp_str)
-    #         self.api_version = str(int(return_data[10:12], 16)) + '.' + str(int(return_data[12:14], 16)) + '.' \
-    #                            + str(int(return_data[14:16], 16)) + '.' + str(int(return_data[16:18], 16))
-    #         tmp_str = "API Version: " + self.api_version
-    #         print(tmp_str)
-    #         self.chip_id = return_data[18:26]
-    #         print("Chip ID: " + self.chip_id)
-    #         i = 34
-    #         tmp_str = ""
-    #         while chr(int(return_data[i] + return_data[i + 1], 16)) != "\0":
-    #             tmp_str += (chr(int(return_data[i] + return_data[i + 1], 16)))
-    #             i += 2
-    #         self.application = tmp_str
-    #         print("Application: " + tmp_str)
-    #         return True
-    #     else:
-    #         print("Response Error:" + return_data[0])
-    #         return False
-
     def command_read_base_id(self):
         self.send_esp3packet(0x05, [0x08])
 
@@ -205,8 +180,6 @@ class SerialReader(Thread):
             print("Error in response data:" + self.serial_data[0])
 
     def run(self):
-        # TODO make command read version to be readable from get data directly
-            #self.command_read_version()
         self.command_read_base_id()
         while True:
             self.serial_data = self.get_serial_data()
