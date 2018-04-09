@@ -6,4 +6,6 @@ RUN apt-get install -y python3-dev
 RUN apt-get install -y build-essential
 RUN apt-get install -y mosquitto mpg123 alsa-utils
 
-RUN pip3 install -U -r requirements.txt
+COPY requirements.txt /root
+
+RUN pip3 install -U -r /root/requirements.txt
