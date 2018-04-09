@@ -1,7 +1,7 @@
 FROM resin/rpi-raspbian 
 
 RUN apt-get update
-RUN apt-get install -y python3-pip mosquitto mpg123 alsa-utils iputils-ping
+RUN apt-get install -y python3-pip python3-dev mosquitto mpg123 alsa-utils iputils-ping
 RUN python3 -m pip install -U pip
 RUN python3 -m pip install -U paho-mqtt
 RUN python3 -m pip install -U pyserial
