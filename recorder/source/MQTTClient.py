@@ -41,7 +41,7 @@ class MqttClient(Thread):
             self.mqtt_client.on_disconnect = on_disconnect
             self.mqtt_client.on_message = on_message
             self.addr = addr
-            self.port = int(port)
+            self.port = port
         except Exception as e:
             print('Error in MqttClient.__init__(): '+str(e))
 
@@ -105,7 +105,7 @@ class MqttClient(Thread):
 
 def create_mqtt_client(addr, port, on_message, topics):
     try:
-        print('Creating mqtt client on broker : '+addr+':'+port)
+        print('Creating mqtt client on broker : '+addr+':'+str(port))
         global TOPICS
         TOPICS = topics
         mqtt_cli_tmp = MqttClient(addr, port, on_message)

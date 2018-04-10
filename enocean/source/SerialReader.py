@@ -3,6 +3,7 @@ from EnOcean import EnOcean
 from threading import Thread
 import time
 import datetime
+import codecs
 
 u8crc8table = [
     0x00, 0x07, 0x0e, 0x09, 0x1c, 0x1b, 0x12, 0x15,
@@ -108,19 +109,19 @@ class SerialReader(Thread):
         s = 0
         while s != '55':
             if self.ser.inWaiting() != 0:
-                s = self.ser.read(1).encode("hex")
+                s = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')
             while self.ser.inWaiting() < 5:
                 time.sleep(0.1)
-        self.data_length = self.ser.read(2).encode("hex")  # read length field
-        self.op_data_length = self.ser.read(1).encode("hex")  # read op length field
-        self.packet_type = self.ser.read(1).encode("hex")  # read packet type field
-        self.header_crc = self.ser.read(1).encode("hex")  # read header crc field
+        self.data_length = str(codecs.encode(self.ser.read(2), 'hex'), 'utf-8')  # read length field
+        self.op_data_length = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')  # read op length field
+        self.packet_type = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')  # read packet type field
+        self.header_crc = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')  # read header crc field
 
         if self.check_header_crc():
             self.total_data_length = (int(self.data_length, 16) + int(self.op_data_length, 16))
             while self.ser.inWaiting() < self.total_data_length:
                 time.sleep(0.1)
-            serial_data = self.ser.read(self.total_data_length + 1).encode("hex")
+            serial_data = str(codecs.encode(self.ser.read(self.total_data_length + 1), 'hex'), 'utf-8')
             if self.check_data_crc(serial_data):
                 return serial_data
             return "Data CRC Failed"
@@ -159,7 +160,7 @@ class SerialReader(Thread):
         p_esp3packet.append(self.calc_esp3data_crc(packet_data))
         for index in range(len(p_esp3packet)):
             p_esp3packet[index] = chr(p_esp3packet[index])
-            self.ser.write(p_esp3packet[index])
+            self.ser.write(p_esp3packet[index].encode('utf-8'))
 
     def command_read_base_id(self):
         self.send_esp3packet(0x05, [0x08])

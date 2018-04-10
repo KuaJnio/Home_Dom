@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ../deploy.cfg
-
 NAME="config"
 ARCH="armhf"
 TARGET="homedom-${ARCH}-touch"

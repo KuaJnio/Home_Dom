@@ -25,11 +25,11 @@ class EnOcean:
 
     def get_id(self):
         if self.get_rorg() == 'f6':
-            return 'HD_'+self.data[4:12]
+            return 'HD_'+self.data[4:12].upper()
         elif self.get_rorg() == 'a5':
-            return 'HD_'+self.data[10:18]
+            return 'HD_'+self.data[10:18].upper()
         elif self.get_rorg() == 'd5':
-            return 'HD_'+self.data[4:12]
+            return 'HD_'+self.data[4:12].upper()
         elif self.get_rorg() == 'd2':
             return 'HD_UNKNOWN'
         else:

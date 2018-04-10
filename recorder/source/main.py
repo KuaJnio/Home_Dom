@@ -4,6 +4,7 @@ from time import sleep
 import json
 import sys
 from MQTTClient import create_mqtt_client
+from get_config import get_parameter
 
 
 def signal_handler(signal, frame):
@@ -14,24 +15,27 @@ signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 
-MQTT_BROKER = sys.argv[1]
-MQTT_PORT = sys.argv[2]
-MQTT_TOPICS = sys.argv[3].split(',')
+MQTT_HOST = get_parameter("mqtt_host")
+MQTT_PORT = get_parameter("mqtt_port")
+MQTT_TOPICS = get_parameter("recorder_topics")
 
 mqtt_client = None
 
-INFLUX_HOST = sys.argv[4]
-INFLUX_PORT = sys.argv[5]
-INFLUX_USER = sys.argv[6]
-INFLUX_PASSWD = sys.argv[7]
-INFLUX_DATABASE = sys.argv[8]
+INFLUX_HOST = get_parameter("influx_host")
+INFLUX_PORT = get_parameter("influx_port")
+INFLUX_USER = get_parameter("influx_user")
+INFLUX_PASSWD = get_parameter("influx_password")
+INFLUX_DATABASE = get_parameter("influx_database")
 
-influxdb_client = InfluxDBClient(host=INFLUX_HOST, port=int(INFLUX_PORT), username=INFLUX_USER, password=INFLUX_PASSWD, database=INFLUX_DATABASE)
+influxdb_client = InfluxDBClient(host=INFLUX_HOST, port=INFLUX_PORT, username=INFLUX_USER, password=INFLUX_PASSWD, database=INFLUX_DATABASE)
 
 
 def on_message(client, userdata, msg):
-    print('New message from MQTT broker')
-    rc = event_manager(msg.topic, msg.payload)
+    print('New message from MQTT broker :')
+    print('[TOPIC] : '+msg.topic)
+    payload = str(msg.payload, 'utf-8')
+    print('[PAYLOAD] : '+payload)
+    rc = event_manager(msg.topic, payload)
     print('Message handled with result code '+str(rc))
 
 
@@ -59,7 +63,6 @@ def event_manager(topic, payload):
         return str(e)
 
 if __name__ == '__main__':
-    mqtt_client = create_mqtt_client(MQTT_BROKER, MQTT_PORT, on_message, MQTT_TOPICS)
+    mqtt_client = create_mqtt_client(MQTT_HOST, MQTT_PORT, on_message, MQTT_TOPICS)
     while True:
         sleep(1)
-

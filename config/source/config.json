@@ -1,4 +1,19 @@
 {
     "homedom": "192.168.1.13",
-    "mqtt": 3883
+    "mqtt_host": "192.168.1.13",
+    "mqtt_port": 1883,
+    "cep_ip": "192.168.1.13",
+    "cep_port": 8080,
+    "lifx_1_ip": "192.168.1.10",
+    "lifx_1_mac": "d0:73:d5:21:89:a6",
+    "influx_host": "192.168.1.13",
+    "influx_port": 8086,
+    "influx_user": "root",
+    "influx_password": "root",
+    "influx_database": "homedom", 
+    "actionmanager_topics": ["inputs"],
+    "enocean_topics": ["outputs"],
+    "hometts_topics": ["outputs"],
+    "lifx_topics": ["outputs"],
+    "recorder_topics": ["inputs"]
 }

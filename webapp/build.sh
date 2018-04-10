@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ../deploy.cfg
-
 NAME="webapp"
 ARCH="armhf"
 TARGET="homedom-${ARCH}-touch"

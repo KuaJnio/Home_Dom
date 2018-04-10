@@ -3,6 +3,7 @@ import sys
 import signal
 import json
 from MQTTClient import create_mqtt_client
+from get_config import get_parameter
 
 
 def signal_handler(signal, frame):
@@ -12,9 +13,9 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
-MQTT_BROKER = sys.argv[1]
-MQTT_PORT = sys.argv[2]
-MQTT_TOPICS = sys.argv[3].split(',')
+MQTT_HOST = get_parameter("mqtt_host")
+MQTT_PORT = get_parameter("mqtt_port")
+MQTT_TOPICS = get_parameter("actionmanager_topics")
 
 mqtt_client = None
 
@@ -35,9 +36,10 @@ GOLD = [58275, 0, 65535, 2500]
 def on_message(client, userdata, msg):
     print('New message from MQTT broker :')
     print('[TOPIC] : '+msg.topic)
-    print('[PAYLOAD] : '+msg.payload)
-    #rc = event_manager(msg.topic, msg.payload)
-    #print('Message handled with result code '+str(rc))
+    payload = str(msg.payload, 'utf-8')
+    print('[PAYLOAD] : '+payload)
+    rc = event_manager(msg.topic, payload)
+    print('Message handled with result code '+str(rc))
 
 
 def send_lifx_command(power, color):
@@ -82,6 +84,6 @@ def event_manager(topic, payload):
         return str(e)
 
 if __name__ == '__main__':
-    mqtt_client = create_mqtt_client(MQTT_BROKER, MQTT_PORT, on_message, MQTT_TOPICS)
+    mqtt_client = create_mqtt_client(MQTT_HOST, MQTT_PORT, on_message, MQTT_TOPICS)
     while True:
         sleep(1)
