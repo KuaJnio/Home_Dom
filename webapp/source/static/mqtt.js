@@ -28,18 +28,14 @@ function onMessageArrived(message) {
   console.log("onMessageArrived:"+message.payloadString);
 }
 
-function clicked_1() {
-  message = new Paho.MQTT.Message(JSON.stringify({"target": "lifx", "power": "on", "color": [58275, 0, 65535, 2500]}));
-  message.destinationName = "outputs";
+$( ".on" ).click(function() {
+  message = new Paho.MQTT.Message(JSON.stringify({"HD_FEATURE": "HD_BUTTON", "HD_IDENTIFIER": this.id, "HD_VALUE": 1}));
+  message.destinationName = "inputs";
   client.send(message);
-}
+});
 
-function clicked_2() {
-  message = new Paho.MQTT.Message(JSON.stringify({"target": "lifx", "power": "off", "color": [58275, 0, 65535, 2500]}));
-  message.destinationName = "outputs";
+$( ".off" ).click(function() {
+  message = new Paho.MQTT.Message(JSON.stringify({"HD_FEATURE": "HD_BUTTON", "HD_IDENTIFIER": this.id, "HD_VALUE": 0}));
+  message.destinationName = "inputs";
   client.send(message);
-}
-
-document.getElementsByClassName("1")[0].addEventListener("click", clicked_1, false);
-
-document.getElementsByClassName("2")[0].addEventListener("click", clicked_2, false);
+});

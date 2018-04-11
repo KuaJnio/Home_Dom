@@ -70,6 +70,11 @@ def event_manager(topic, payload):
                 send_lifx_command("on", GOLD)
             elif value == 2 or value == 4:
                 send_lifx_command("off", GOLD)
+        if feature == "HD_BUTTON":
+            if value == 1:
+                send_lifx_command("on", GOLD)
+            elif value == 0:
+                send_lifx_command("off", GOLD)
         elif feature == "HD_CONTACT":
             if value == 0:
                 send_hometts_command("Porte ouverte")
