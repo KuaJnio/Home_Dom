@@ -61,30 +61,29 @@ def send_hometts_command(tts):
 
 def event_manager(topic, payload):
     try:
-        json_payload = json.loads(payload)
-        feature = json_payload['HD_FEATURE']
-        identifier = json_payload['HD_IDENTIFIER']
-        value = json_payload['HD_VALUE']
-        if feature == "HD_SWITCH":
-            if value == 1 or value == 3:
-                send_lifx_command("on", GOLD)
-            elif value == 2 or value == 4:
-                send_lifx_command("off", GOLD)
-        if feature == "HD_BUTTON":
-            if value == 1:
-                send_lifx_command("on", GOLD)
-            elif value == 0:
-                send_lifx_command("off", GOLD)
-        elif feature == "HD_CONTACT":
-            if value == 0:
-                send_hometts_command("Porte ouverte")
-            elif value == 1:
-                send_hometts_command("Porte fermer")
-        elif feature == "HD_TEMPERATURE":
-            send_hometts_command("Il fait "+str(value)+" degrer")
-        elif feature == "HD_HUMIDITY":
-            send_hometts_command("Lumiditer est de "+str(value)+" pourcent")
-        return "OK"
+        if topic == "inputs":
+            json_payload = json.loads(payload)
+            feature = json_payload['HD_FEATURE']
+            identifier = json_payload['HD_IDENTIFIER']
+            value = json_payload['HD_VALUE']
+            if feature == "HD_CONTACT":
+                if value == 0:
+                    send_hometts_command("Porte ouverte")
+                elif value == 1:
+                    send_hometts_command("Porte fermer")
+            elif feature == "HD_TEMPERATURE":
+                send_hometts_command("Il fait "+str(value)+" degrer")
+            elif feature == "HD_HUMIDITY":
+                send_hometts_command("Lumiditer est de "+str(value)+" pourcent")
+            return "OK"
+        elif topic == "events":
+            json_payload = json.loads(payload)
+            name = json_payload['name']
+            if name == "LAMPE_CHAMBRE_ON":
+                 send_lifx_command("on", GOLD)
+            elif name == "LAMPE_CHAMBRE_OFF":
+                 send_lifx_command("off", GOLD)
+            return "OK"
     except Exception as e:
         return str(e)
 

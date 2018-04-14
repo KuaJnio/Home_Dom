@@ -11,7 +11,7 @@
     "influx_user": "root",
     "influx_password": "root",
     "influx_database": "homedom", 
-    "actionmanager_topics": ["inputs"],
+    "actionmanager_topics": ["inputs", "events"],
     "enocean_topics": ["outputs"],
     "hometts_topics": ["outputs"],
     "lifx_topics": ["outputs"],
