@@ -21,22 +21,10 @@ MQTT_TOPICS = get_parameter("recorder_topics")
 
 mqtt_client = None
 
-INFLUX_HOST = get_parameter("influx_host")
-INFLUX_PORT = get_parameter("influx_port")
-INFLUX_USER = get_parameter("influx_user")
-INFLUX_PASSWD = get_parameter("influx_password")
-INFLUX_DATABASE = get_parameter("influx_database")
-
-influxdb_client = InfluxDBClient(host=INFLUX_HOST, port=INFLUX_PORT, username=INFLUX_USER, password=INFLUX_PASSWD, database=INFLUX_DATABASE)
-
 
 def on_message(client, userdata, msg):
-    print('New message from MQTT broker :')
-    print('[TOPIC] : '+msg.topic)
     payload = str(msg.payload, 'utf-8')
-    print('[PAYLOAD] : '+payload)
     rc = event_manager(msg.topic, payload)
-    print('Message handled with result code '+str(rc))
 
 
 def event_manager(topic, payload):
@@ -57,7 +45,6 @@ def event_manager(topic, payload):
                 }
             }
         ]
-        influxdb_client.write_points(json_body)
         return "OK"
     except Exception as e:
         return str(e)

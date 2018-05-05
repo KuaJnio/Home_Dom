@@ -25,6 +25,16 @@ MAC = get_parameter("lifx_1_mac")
 mqtt_client = None
 
 
+def turnOnLampWithLifx(lifxcolor):
+    bulb = lifxlan.Light(MAC, IP)
+    bulb.set_color(lifxcolor)
+    bulb.set_power("on")
+
+def turnOffLampWithLifx():
+    bulb = lifxlan.Light(MAC, IP)
+    bulb.set_power("off")
+
+
 def on_message(client, userdata, msg):
     print('New message from MQTT broker :')
     print('[TOPIC] : '+msg.topic)
@@ -36,14 +46,6 @@ def on_message(client, userdata, msg):
 
 def event_manager(topic, payload):
     try:
-        def turnOnLampWithLifx(lifxcolor):
-            bulb = lifxlan.Light(MAC, IP)
-            bulb.set_color(lifxcolor)
-            bulb.set_power("on")
-
-        def turnOffLampWithLifx():
-            bulb = lifxlan.Light(MAC, IP)
-            bulb.set_power("off")
         json_payload = json.loads(payload)
         target=json_payload['target']
         if target == "lifx":

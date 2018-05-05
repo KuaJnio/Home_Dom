@@ -4,6 +4,7 @@ import signal
 import json
 from MQTTClient import create_mqtt_client
 from get_config import get_parameter
+import requests
 
 
 def signal_handler(signal, frame):
@@ -16,6 +17,9 @@ signal.signal(signal.SIGTERM, signal_handler)
 MQTT_HOST = get_parameter("mqtt_host")
 MQTT_PORT = get_parameter("mqtt_port")
 MQTT_TOPICS = get_parameter("actionmanager_topics")
+CEP_IP = get_parameter("cep_ip")
+CEP_PORT = get_parameter("cep_port")
+CEP_URL = "http://{}:{}".format(CEP_IP, CEP_PORT)
 
 mqtt_client = None
 
@@ -58,6 +62,12 @@ def send_hometts_command(tts):
     })
     mqtt_client.publish("outputs", payload)
 
+def disable_rule(rule):
+    r = requests.post(CEP_URL+"/rule/"+rule+"/disable")
+
+def enable_rule(rule):
+    r = requests.post(CEP_URL+"/rule/"+rule+"/enable")
+
 
 def event_manager(topic, payload):
     try:
@@ -80,9 +90,19 @@ def event_manager(topic, payload):
             json_payload = json.loads(payload)
             name = json_payload['name']
             if name == "LAMPE_CHAMBRE_ON":
-                 send_lifx_command("on", GOLD)
+                send_lifx_command("on", GOLD)
             elif name == "LAMPE_CHAMBRE_OFF":
-                 send_lifx_command("off", GOLD)
+                send_lifx_command("off", GOLD)
+            elif name == "LAMPE_CHAMBRE_ENABLE":
+                enable_rule("LAMPE_CHAMBRE_ON")
+                send_lifx_command("on", GREEN)
+                sleep(3)
+                send_lifx_command("on", GOLD)
+            elif name == "LAMPE_CHAMBRE_DISABLE":
+                disable_rule("LAMPE_CHAMBRE_ON")
+                send_lifx_command("on", RED)
+                sleep(3)
+                send_lifx_command("off", GOLD)
             return "OK"
     except Exception as e:
         return str(e)
