@@ -1,5 +1,5 @@
 import json
-
+import time
 
 class EnOcean:
     def __init__(self, eo_data):
@@ -129,7 +129,8 @@ class EnOcean:
         hd_payload = json.JSONEncoder().encode({
         "HD_FEATURE": feature,
         "HD_IDENTIFIER": identifier,
-        "HD_VALUE": value
+        "HD_VALUE": value,
+        "HD_TIMESTAMP": int(time.time())
         })
         return hd_payload
 

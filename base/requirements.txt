@@ -1,5 +1,4 @@
 paho-mqtt
 pyserial
 lifxlan
-influxdb
 flask
