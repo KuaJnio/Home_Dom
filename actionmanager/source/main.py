@@ -8,42 +8,36 @@ import requests
 
 
 def signal_handler(signal, frame):
-    print("Interpreted signal "+str(signal)+", exiting now...")
+    print("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
-MQTT_HOST = get_parameter("mqtt_host")
-MQTT_PORT = get_parameter("mqtt_port")
-MQTT_TOPICS = get_parameter("actionmanager_topics")
-CEP_IP = get_parameter("cep_ip")
-CEP_PORT = get_parameter("cep_port")
-CEP_URL = "http://{}:{}".format(CEP_IP, CEP_PORT)
-
-mqtt_client = None
-
-RED = [65535, 65535, 65535, 3500]
-ORANGE = [6500, 65535, 65535, 3500]
-YELLOW = [9000, 65535, 65535, 3500]
-GREEN = [16173, 65535, 65535, 3500]
-CYAN = [29814, 65535, 65535, 3500]
-BLUE = [43634, 65535, 65535, 3500]
-PURPLE = [50486, 65535, 65535, 3500]
-PINK = [58275, 65535, 47142, 3500]
-WHITE = [58275, 0, 65535, 5500]
-COLD_WHITE = [58275, 0, 65535, 9000]
-WARM_WHITE = [58275, 0, 65535, 3200]
-GOLD = [58275, 0, 65535, 2500]
+MQTT_HOST       = get_parameter("mqtt_host")
+MQTT_PORT       = get_parameter("mqtt_port")
+MQTT_TOPICS     = get_parameter("actionmanager_topics")
+CEP_IP          = get_parameter("cep_ip")
+CEP_PORT        = get_parameter("cep_port")
+CEP_URL         = "http://{}:{}".format(CEP_IP, CEP_PORT)
+mqtt_client     = None
+RED             = [65535, 65535, 65535, 3500]
+ORANGE          = [6500, 65535, 65535, 3500]
+YELLOW          = [9000, 65535, 65535, 3500]
+GREEN           = [16173, 65535, 65535, 3500]
+CYAN            = [29814, 65535, 65535, 3500]
+BLUE            = [43634, 65535, 65535, 3500]
+PURPLE          = [50486, 65535, 65535, 3500]
+PINK            = [58275, 65535, 47142, 3500]
+WHITE           = [58275, 0, 65535, 5500]
+COLD_WHITE      = [58275, 0, 65535, 9000]
+WARM_WHITE      = [58275, 0, 65535, 3200]
+GOLD            = [58275, 0, 65535, 2500]
 
 
 def on_message(client, userdata, msg):
-    print('New message from MQTT broker :')
-    print('[TOPIC] : '+msg.topic)
     payload = str(msg.payload, 'utf-8')
-    print('[PAYLOAD] : '+payload)
-    rc = event_manager(msg.topic, payload)
-    print('Message handled with result code '+str(rc))
+    event_manager(msg.topic, payload)
 
 
 def send_lifx_command(power, color):
@@ -62,11 +56,13 @@ def send_hometts_command(tts):
     })
     mqtt_client.publish("outputs", payload)
 
-def disable_rule(rule):
-    r = requests.post(CEP_URL+"/rule/"+rule+"/disable")
 
-def enable_rule(rule):
-    r = requests.post(CEP_URL+"/rule/"+rule+"/enable")
+def disable_regex(regex):
+    requests.post("{}/regex/{}/disable".format(CEP_URL, regex))    
+
+
+def enable_regex(regex):
+    requests.post("{}/regex/{}/enable".format(CEP_URL, regex))
 
 
 def event_manager(topic, payload):
@@ -82,9 +78,9 @@ def event_manager(topic, payload):
                 elif value == 1:
                     send_hometts_command("Porte fermer")
             elif feature == "HD_TEMPERATURE":
-                send_hometts_command("Il fait "+str(value)+" degrer")
+                send_hometts_command("Il fait {} degrer".format(value))
             elif feature == "HD_HUMIDITY":
-                send_hometts_command("Lumiditer est de "+str(value)+" pourcent")
+                send_hometts_command("Lumiditer est de {} pourcent".format(value))
             return "OK"
         elif topic == "events":
             json_payload = json.loads(payload)
@@ -94,18 +90,11 @@ def event_manager(topic, payload):
             elif name == "LAMPE_CHAMBRE_OFF":
                 send_lifx_command("off", GOLD)
             elif name == "LAMPE_CHAMBRE_ENABLE":
-                enable_rule("LAMPE_CHAMBRE_ON")
-                send_lifx_command("on", GREEN)
-                sleep(3)
-                send_lifx_command("on", GOLD)
+                enable_regex("PRESENCE_CHAMBRE_ON")
             elif name == "LAMPE_CHAMBRE_DISABLE":
-                disable_rule("LAMPE_CHAMBRE_ON")
-                send_lifx_command("on", RED)
-                sleep(3)
-                send_lifx_command("off", GOLD)
-            return "OK"
+                disable_regex("PRESENCE_CHAMBRE_ON")
     except Exception as e:
-        return str(e)
+        print("Error in event_manager(): {}".format(e))
 
 if __name__ == '__main__':
     mqtt_client = create_mqtt_client(MQTT_HOST, MQTT_PORT, on_message, MQTT_TOPICS)

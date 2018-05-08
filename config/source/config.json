@@ -11,5 +11,5 @@
     "hometts_topics":       ["outputs"],
     "lifx_topics":          ["outputs"],
     "recorder_topics":      ["inputs"],
-    "database_path":        "/usr/share/homedom_data/data.db"
+    "database_path":        "/root/data.db"
 }

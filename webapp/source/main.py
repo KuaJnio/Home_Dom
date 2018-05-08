@@ -7,6 +7,14 @@ import json
 import signal
 import requests
 
+
+def signal_handler(signal, frame):
+    print("Interpreted signal {}, exiting now...".format(signal))
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
+
 app = Flask(__name__)
 
 
@@ -15,7 +23,7 @@ def home():
     try:
         return render_template('home.html')
     except Exception as e:
-        print("Error in home: "+str(e))
+        print("Error in home: {}".format(e))
         return str(e)
         
 @app.route('/actuators')
@@ -23,30 +31,8 @@ def actuators():
     try:
         return render_template('actuators.html')
     except Exception as e:
-        print("Error in home: "+str(e))
+        print("Error in home: {}".format(e))
         return str(e)
 
-def signal_term_handler(signal, frame):
-    print('Catched signal SIGTERM')
-    print('Executing some actions before exiting process...') 
-    try:
-        pass
-    except Exception as e:
-        print('Error in signal_term_handler: '+str(e))
-    print('Done handling signal SIGTERM, exiting now!')
-    sys.exit(0)
-
-
-def main():
-    try:
-        signal.signal(signal.SIGTERM, signal_term_handler)
-        print("Initializing server...")
-        app.run(host='0.0.0.0', port=80, debug=True)
-    except Exception as e:
-        print('Error in main: '+str(e))
-    while True:
-        sleep(1)
-
-
 if __name__ == '__main__':
-    main()
+    app.run(host='0.0.0.0', port=80, debug=True)
