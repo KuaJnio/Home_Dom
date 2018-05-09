@@ -4,20 +4,21 @@
         <meta charset="utf-8" />
         <title>HOME_DOM</title>
         <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.plot.ly/plotly-latest.min.js" type="text/javascript"></script>
     </head>
     <body>
         <header>
             <h1><a href="{{ url_for('home') }}">HOME_DOM</a></h1>
             <nav>
                 <ul>
-                    <a href="{{ url_for('home') }}"><li>GRAFANA</li></a>
+                    <a href="{{ url_for('home') }}"><li>HOME</li></a>
                     <a href="{{ url_for('actuators') }}"><li>ACTUATORS</li></a>
                     <a href=""><li>WATCH</li></a>
                 </ul>
             </nav>
         </header>
         <section>
-		<iframe src="http://192.168.1.13:8000/data" width="795" height="395"></iframe> 
+            <iframe src="http://192.168.1.13:8000/data" width="795" height="395"></iframe>
         </section>
     </body>
 </html>
