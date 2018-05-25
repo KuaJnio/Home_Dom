@@ -85,14 +85,14 @@ def event_manager(topic, payload):
         elif topic == "events":
             json_payload = json.loads(payload)
             name = json_payload['name']
-            if name == "LAMPE_CHAMBRE_ON":
+            if name == "LAMPE_CUISINE_ON":
                 send_lifx_command("on", GOLD)
-            elif name == "LAMPE_CHAMBRE_OFF":
+            elif name == "LAMPE_CUISINE_OFF":
                 send_lifx_command("off", GOLD)
-            elif name == "LAMPE_CHAMBRE_ENABLE":
-                enable_regex("PRESENCE_CHAMBRE_ON")
-            elif name == "LAMPE_CHAMBRE_DISABLE":
-                disable_regex("PRESENCE_CHAMBRE_ON")
+            elif name == "PRESENCE_SALON_ENABLE":
+                enable_regex("PRESENCE_SALON_ON")
+            elif name == "PRESENCE_SALON_DISABLE":
+                disable_regex("PRESENCE_SALON_ON")
     except Exception as e:
         print("Error in event_manager(): {}".format(e))
 
