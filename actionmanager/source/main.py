@@ -11,28 +11,29 @@ def signal_handler(signal, frame):
     print("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
+
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
-MQTT_HOST       = get_parameter("mqtt_host")
-MQTT_PORT       = get_parameter("mqtt_port")
-MQTT_TOPICS     = get_parameter("actionmanager_topics")
-CEP_IP          = get_parameter("cep_ip")
-CEP_PORT        = get_parameter("cep_port")
-CEP_URL         = "http://{}:{}".format(CEP_IP, CEP_PORT)
-mqtt_client     = None
-RED             = [65535, 65535, 65535, 3500]
-ORANGE          = [6500, 65535, 65535, 3500]
-YELLOW          = [9000, 65535, 65535, 3500]
-GREEN           = [16173, 65535, 65535, 3500]
-CYAN            = [29814, 65535, 65535, 3500]
-BLUE            = [43634, 65535, 65535, 3500]
-PURPLE          = [50486, 65535, 65535, 3500]
-PINK            = [58275, 65535, 47142, 3500]
-WHITE           = [58275, 0, 65535, 5500]
-COLD_WHITE      = [58275, 0, 65535, 9000]
-WARM_WHITE      = [58275, 0, 65535, 3200]
-GOLD            = [58275, 0, 65535, 2500]
+MQTT_HOST = get_parameter("mqtt_host")
+MQTT_PORT = get_parameter("mqtt_port")
+MQTT_TOPICS = get_parameter("actionmanager_topics")
+CEP_IP = get_parameter("cep_ip")
+CEP_PORT = get_parameter("cep_port")
+CEP_URL = "http://{}:{}".format(CEP_IP, CEP_PORT)
+mqtt_client = None
+RED = [65535, 65535, 65535, 3500]
+ORANGE = [6500, 65535, 65535, 3500]
+YELLOW = [9000, 65535, 65535, 3500]
+GREEN = [16173, 65535, 65535, 3500]
+CYAN = [29814, 65535, 65535, 3500]
+BLUE = [43634, 65535, 65535, 3500]
+PURPLE = [50486, 65535, 65535, 3500]
+PINK = [58275, 65535, 47142, 3500]
+WHITE = [58275, 0, 65535, 5500]
+COLD_WHITE = [58275, 0, 65535, 9000]
+WARM_WHITE = [58275, 0, 65535, 3200]
+GOLD = [58275, 0, 65535, 2500]
 
 
 def on_message(client, userdata, msg):
@@ -58,7 +59,7 @@ def send_hometts_command(tts):
 
 
 def disable_regex(regex):
-    requests.post("{}/regex/{}/disable".format(CEP_URL, regex))    
+    requests.post("{}/regex/{}/disable".format(CEP_URL, regex))
 
 
 def enable_regex(regex):
@@ -70,7 +71,7 @@ def event_manager(topic, payload):
         if topic == "inputs":
             json_payload = json.loads(payload)
             feature = json_payload['HD_FEATURE']
-            identifier = json_payload['HD_IDENTIFIER']
+            #identifier = json_payload['HD_IDENTIFIER']
             value = json_payload['HD_VALUE']
             if feature == "HD_CONTACT":
                 if value == 0:
@@ -95,6 +96,7 @@ def event_manager(topic, payload):
                 disable_regex("PRESENCE_SALON_ON")
     except Exception as e:
         print("Error in event_manager(): {}".format(e))
+
 
 if __name__ == '__main__':
     mqtt_client = create_mqtt_client(MQTT_HOST, MQTT_PORT, on_message, MQTT_TOPICS)

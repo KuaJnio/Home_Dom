@@ -1,6 +1,7 @@
 import json
 import time
 
+
 class EnOcean:
     def __init__(self, eo_data):
         self.data = eo_data
@@ -25,11 +26,11 @@ class EnOcean:
 
     def get_id(self):
         if self.get_rorg() == 'f6':
-            return 'HD_'+self.data[4:12].upper()
+            return 'HD_' + self.data[4:12].upper()
         elif self.get_rorg() == 'a5':
-            return 'HD_'+self.data[10:18].upper()
+            return 'HD_' + self.data[10:18].upper()
         elif self.get_rorg() == 'd5':
-            return 'HD_'+self.data[4:12].upper()
+            return 'HD_' + self.data[4:12].upper()
         elif self.get_rorg() == 'd2':
             return 'HD_UNKNOWN'
         else:
@@ -37,11 +38,11 @@ class EnOcean:
 
     def get_rssi(self):
         if self.get_rorg() == 'f6':
-            return int(self.data[24:26], 16)*(-1)
+            return int(self.data[24:26], 16) * (-1)
         elif self.get_rorg() == 'a5':
-            return int(self.data[30:32], 16)*(-1)
+            return int(self.data[30:32], 16) * (-1)
         elif self.get_rorg() == 'd5':
-            return int(self.data[24:26], 16)*(-1)
+            return int(self.data[24:26], 16) * (-1)
         elif self.get_rorg() == 'd2':
             return 'HD_UNKNOWN'
         else:
@@ -102,7 +103,7 @@ class EnOcean:
         if self.is_teach_in():
             return 'HD_UNKNOWN'
         if int(self.get_data(), 16) & 1:
-            return "{0:.2f}".format((int(self.get_data()[0:2], 16)*5)/250.0)
+            return "{0:.2f}".format((int(self.get_data()[0:2], 16) * 5) / 250.0)
         else:
             return 'HD_UNKNOWN'
 
@@ -124,13 +125,13 @@ class EnOcean:
         if self.is_teach_in():
             return 'HD_UNKNOWN'
         return "{0:.2f}".format((int(self.get_data()[2:4], 16) * 100) / 250.0)
-        
+
     def set_payload(self, feature, identifier, value):
         hd_payload = json.JSONEncoder().encode({
-        "HD_FEATURE": feature,
-        "HD_IDENTIFIER": identifier,
-        "HD_VALUE": value,
-        "HD_TIMESTAMP": int(time.time())
+            "HD_FEATURE": feature,
+            "HD_IDENTIFIER": identifier,
+            "HD_VALUE": value,
+            "HD_TIMESTAMP": int(time.time())
         })
         return hd_payload
 
@@ -143,14 +144,14 @@ class EnOcean:
         elif self.get_type() == 'HD_PRESENCE':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_occupancy() == 'HD_UNKNOWN' and not self.is_teach_in():
                 payload = self.set_payload(self.get_type(), self.get_id(), int(self.get_occupancy()))
-                payloads.append(payload)   
+                payloads.append(payload)
         elif self.get_type() == 'HD_TEMPHUM':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_temp() == 'HD_UNKNOWN' and not self.is_teach_in():
                 payload = self.set_payload("HD_TEMPERATURE", self.get_id(), float(self.get_temp()))
-                payloads.append(payload)   
+                payloads.append(payload)
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_hum() == 'HD_UNKNOWN' and not self.is_teach_in():
                 payload = self.set_payload('HD_HUMIDITY', self.get_id(), float(self.get_hum()))
-                payloads.append(payload)   
+                payloads.append(payload)
         elif self.get_type() == 'HD_CONTACT':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_contact() == 'HD_UNKNOWN' and not self.is_teach_in():
                 payload = self.set_payload(self.get_type(), self.get_id(), int(self.get_contact()))

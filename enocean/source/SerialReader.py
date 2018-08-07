@@ -49,7 +49,7 @@ class SerialReader(Thread):
         try:
             self.ser = serial.Serial(self.device, 57600, timeout=0)
         except serial.SerialException:
-            print('Could not connect to serial device'+device)
+            print('Could not connect to serial device' + device)
         self.app_version = ''
         self.api_version = ''
         self.chip_id = ''
@@ -164,7 +164,6 @@ class SerialReader(Thread):
 
     def command_read_base_id(self):
         self.send_esp3packet(0x05, [0x08])
-
 
     def parse_responde_code(self):
         if int(self.serial_data[0:1], 16) == 0x00:

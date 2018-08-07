@@ -11,16 +11,17 @@ def signal_handler(signal, frame):
     print("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
+
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 
-MQTT_HOST       = get_parameter("mqtt_host")
-MQTT_PORT       = get_parameter("mqtt_port")
-MQTT_TOPICS     = get_parameter("lifx_topics")
-IP              = get_parameter("lifx_1_ip")
-MAC             = get_parameter("lifx_1_mac")
-mqtt_client     = None
+MQTT_HOST = get_parameter("mqtt_host")
+MQTT_PORT = get_parameter("mqtt_port")
+MQTT_TOPICS = get_parameter("lifx_topics")
+IP = get_parameter("lifx_1_ip")
+MAC = get_parameter("lifx_1_mac")
+mqtt_client = None
 
 
 def on_message(client, userdata, msg):
@@ -42,16 +43,17 @@ def turnOffLampWithLifx():
 def event_manager(topic, payload):
     try:
         json_payload = json.loads(payload)
-        target=json_payload['target']
+        target = json_payload['target']
         if target == "lifx":
-            power=json_payload['power']
-            color=json_payload['color']
+            power = json_payload['power']
+            color = json_payload['color']
             if power == "on":
                 turnOnLampWithLifx(color)
             elif power == "off":
                 turnOffLampWithLifx()
     except Exception as e:
         print("Error in event_manager(): {}".format(e))
+
 
 if __name__ == '__main__':
     mqtt_client = create_mqtt_client(MQTT_HOST, MQTT_PORT, on_message, MQTT_TOPICS)

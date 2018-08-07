@@ -1,16 +1,12 @@
-import os
-from flask import Flask, request, redirect, url_for, render_template, Response, send_file, jsonify
-import glob
+from flask import Flask, render_template
 import sys
-from time import sleep
-import json
 import signal
-import requests
 
 
 def signal_handler(signal, frame):
     print("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
+
 
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
@@ -25,7 +21,8 @@ def home():
     except Exception as e:
         print("Error in home: {}".format(e))
         return str(e)
-        
+
+
 @app.route('/actuators')
 def actuators():
     try:
@@ -33,6 +30,7 @@ def actuators():
     except Exception as e:
         print("Error in home: {}".format(e))
         return str(e)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)

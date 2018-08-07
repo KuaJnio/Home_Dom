@@ -61,7 +61,7 @@ class MqttClient(Thread):
                 #print("Publish OK")
                 pass
             else:
-                print("Publish KO, with result {}".format(publish_errors(rc)))
+                print("Publish KO, with result {}".format(self.publish_errors(rc)))
         except Exception as e:
             print("Error in MqttClient.publish(): {}".format(e))
 
