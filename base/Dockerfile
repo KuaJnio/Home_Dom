@@ -1,4 +1,4 @@
-FROM resin/rpi-raspbian 
+FROM resin/rpi-raspbian:stretch-20180801
 
 RUN apt-get update
 RUN apt-get install -y python3-pip
