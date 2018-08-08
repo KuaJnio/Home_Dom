@@ -18,9 +18,9 @@ signal.signal(signal.SIGTERM, signal_handler)
 MQTT_HOST = get_parameter("mqtt_host")
 MQTT_PORT = get_parameter("mqtt_port")
 MQTT_TOPICS = get_parameter("actionmanager_topics")
-CEP_IP = get_parameter("cep_ip")
-CEP_PORT = get_parameter("cep_port")
-CEP_URL = "http://{}:{}".format(CEP_IP, CEP_PORT)
+HOMEVENTS_IP = get_parameter("homevents_ip")
+HOMEVENTS_PORT = get_parameter("homevents_port")
+HOMEVENTS_URL = "http://{}:{}".format(HOMEVENTS_IP, HOMEVENTS_PORT)
 mqtt_client = None
 RED = [65535, 65535, 65535, 3500]
 ORANGE = [6500, 65535, 65535, 3500]
@@ -59,11 +59,11 @@ def send_hometts_command(tts):
 
 
 def disable_regex(regex):
-    requests.post("{}/regex/{}/disable".format(CEP_URL, regex))
+    requests.post("{}/regex/{}/disable".format(HOMEVENTS_URL, regex))
 
 
 def enable_regex(regex):
-    requests.post("{}/regex/{}/enable".format(CEP_URL, regex))
+    requests.post("{}/regex/{}/enable".format(HOMEVENTS_URL, regex))
 
 
 def event_manager(topic, payload):

@@ -105,7 +105,7 @@ build-homevents:
 run-homevents:
 	$(TARGET) rm -f homevents ||:
 	"$(PULL)homevents"
-	$(TARGET) run -d --restart always --name homevents registry:5000/homevents
+	$(TARGET) run -d --restart always --name homevents -p 8080:80 registry:5000/homevents
 
 homevents:
 	make build-homevents
