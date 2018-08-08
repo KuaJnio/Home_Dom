@@ -1,0 +1,12 @@
+section {
+    padding: 20px;
+}
+
+* {
+    outline: none;
+}
+
+.section_home .container {
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
