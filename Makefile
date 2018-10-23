@@ -1,8 +1,8 @@
 BUILD="docker build --pull -t registry:5000/"
 PUSH="docker push registry:5000/"
 PULL="docker pull registry:5000/"
-TARGET="192.168.1.13"
-REMOTE="docker -H $(TARGET):2375"
+TARGET="docker -H 192.168.1.23:2375"
+TARGET="docker"
 
 default:
 
