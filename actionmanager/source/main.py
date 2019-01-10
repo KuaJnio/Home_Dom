@@ -79,9 +79,9 @@ def event_manager(topic, payload):
                 elif value == 1:
                     send_hometts_command("Porte fermer")
             elif feature == "HD_TEMPERATURE":
-                send_hometts_command("Il fait {} degrer".format(value))
+                send_hometts_command("Il fait {} degrer".format(value).replace('.', ','))
             elif feature == "HD_HUMIDITY":
-                send_hometts_command("Lumiditer est de {} pourcent".format(value))
+                send_hometts_command("Lumiditer est de {} pourcent".format(value).replace('.', ','))
             return "OK"
         elif topic == "events":
             json_payload = json.loads(payload)

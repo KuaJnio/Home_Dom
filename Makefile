@@ -1,8 +1,9 @@
+.PHONY: actionmanager base common config enocean hometts homevents lifx mqtt recorder webapp
 BUILD="docker build --pull -t registry:5000/"
 PUSH="docker push registry:5000/"
-PULL="docker pull registry:5000/"
-TARGET="192.168.1.13"
-REMOTE="docker -H $(TARGET):2375"
+PULL="pull registry:5000/"
+HOST="192.168.1.16"
+TARGET=docker -H $(HOST):2375
 
 default:
 
@@ -39,7 +40,7 @@ build-mqtt:
 
 run-mqtt:
 	$(TARGET) rm -f mqtt ||:
-	"$(PULL)mqtt"
+	$(TARGET) pull registry:5000/mqtt
 	$(TARGET) run -d --restart always --name mqtt -p 1883:1883 -p 1884:1884 registry:5000/mqtt
 
 mqtt:
@@ -52,7 +53,7 @@ build-config:
 
 run-config:
 	$(TARGET) rm -f config ||:
-	"$(PULL)config"
+	$(TARGET) pull registry:5000/config
 	$(TARGET) run -d --restart always --name config -p 8090:80 registry:5000/config
 
 config:
@@ -65,7 +66,7 @@ build-actionmanager:
 
 run-actionmanager:
 	$(TARGET) rm -f actionmanager ||:
-	"$(PULL)actionmanager"
+	$(TARGET) pull registry:5000/actionmanager
 	$(TARGET) run -d --restart always --name actionmanager registry:5000/actionmanager
 
 actionmanager:
@@ -78,7 +79,7 @@ build-enocean:
 
 run-enocean:
 	$(TARGET) rm -f enocean ||:
-	"$(PULL)enocean"
+	$(TARGET) pull registry:5000/enocean
 	$(TARGET) run -d --restart always --name enocean --device /dev/ttyUSB0:/dev/ttyENOCEAN registry:5000/enocean
 
 enocean:
@@ -91,7 +92,7 @@ build-hometts:
 
 run-hometts:
 	$(TARGET) rm -f hometts ||:
-	"$(PULL)hometts"
+	$(TARGET) pull registry:5000/hometts
 	$(TARGET) run -d --restart always --name hometts --device /dev/snd registry:5000/hometts
 
 hometts:
@@ -104,7 +105,7 @@ build-homevents:
 
 run-homevents:
 	$(TARGET) rm -f homevents ||:
-	"$(PULL)homevents"
+	$(TARGET) pull registry:5000/homevents
 	$(TARGET) run -d --restart always --name homevents -p 8080:80 registry:5000/homevents
 
 homevents:
@@ -117,7 +118,7 @@ build-lifx:
 
 run-lifx:
 	$(TARGET) rm -f lifx ||:
-	"$(PULL)lifx"
+	$(TARGET) pull registry:5000/lifx
 	$(TARGET) run -d --restart always --name lifx --net host registry:5000/lifx
 
 lifx:
@@ -130,8 +131,8 @@ build-recorder:
 
 run-recorder:
 	$(TARGET) rm -f recorder ||:
-	"$(PULL)recorder"
-	$(TARGET) run -d --restart always --name recorder -v /usr/share/recorder-data:/home -p 8000:80 registry:5000/recorder
+	$(TARGET) pull registry:5000/recorder
+	$(TARGET) run -d --restart always --name recorder -v /mnt/wdlabs/recorder-data:/home -p 8000:80 registry:5000/recorder
 
 recorder:
 	make build-recorder
@@ -143,7 +144,7 @@ build-webapp:
 
 run-webapp:
 	$(TARGET) rm -f webapp ||:
-	"$(PULL)webapp"
+	$(TARGET) pull registry:5000/webapp
 	$(TARGET) run -d --restart always --name webapp -p 80:80 registry:5000/webapp
 
 webapp:
