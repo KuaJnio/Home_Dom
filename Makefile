@@ -1,4 +1,4 @@
-.PHONY: actionmanager base common config enocean hometts homevents lifx mqtt recorder webapp
+.PHONY: actionmanager base common config enocean hometts homevents lifx mqtt recorder webapp weather
 BUILD="docker build --pull -t registry:5000/"
 PUSH="docker push registry:5000/"
 PULL="pull registry:5000/"
@@ -15,6 +15,7 @@ deploy-common:
 	cp common/MQTTClient.py lifx/source
 	cp common/MQTTClient.py recorder/source
 	cp common/MQTTClient.py webapp/source
+	cp common/MQTTClient.py weather/source
 
 	cp common/get_config.py actionmanager/source
 	cp common/get_config.py homevents/source
@@ -23,9 +24,10 @@ deploy-common:
 	cp common/get_config.py lifx/source
 	cp common/get_config.py recorder/source
 	cp common/get_config.py webapp/source
+	cp common/get_config.py weather/source
 
 clean-target:
-	$(TARGET) rm -f mqtt config actionmanager enocean homevents hometts lifx recorder webapp ||:
+	$(TARGET) rm -f mqtt config actionmanager enocean homevents hometts lifx recorder webapp weather ||:
 
 build-base:
 	"$(BUILD)base" base
@@ -151,6 +153,19 @@ webapp:
 	make build-webapp
 	make run-webapp
 
+build-weather:
+	"$(BUILD)weather" weather
+	"$(PUSH)weather"
+
+run-weather:
+	$(TARGET) rm -f weather ||:
+	$(TARGET) pull registry:5000/weather
+	$(TARGET) run -d --restart always --name weather registry:5000/weather
+
+weather:
+	make build-weather
+	make run-weather
+
 build:
 	make deploy-common
 	make build-base
@@ -163,6 +178,7 @@ build:
 	make build-lifx
 	make build-recorder
 	make build-webapp
+	make build-weather
 
 run:
 	make run-mqtt
@@ -174,6 +190,7 @@ run:
 	make run-lifx
 	make run-recorder
 	make run-webapp
+	make run-weather
 
 all:
 	make clean-target

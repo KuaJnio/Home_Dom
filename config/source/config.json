@@ -11,5 +11,6 @@
     "hometts_topics":       ["outputs"],
     "lifx_topics":          ["outputs"],
     "recorder_topics":      ["inputs"],
+    "weather_topics":       ["outputs"],
     "database_path":        "/home/data.db"
 }

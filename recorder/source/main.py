@@ -6,6 +6,8 @@ from get_config import get_parameter
 from models import Data
 from database import DatabaseHandler
 from flask import Flask, jsonify
+import datetime
+import pytz
 
 
 def signal_handler(signal, frame):
@@ -24,11 +26,13 @@ DATABASE_PATH = get_parameter("database_path")
 mqtt_client = None
 database_handler = None
 app = Flask(__name__)
+tz = pytz.timezone('Europe/Paris')
 
 
 def on_message(client, userdata, msg):
     payload = str(msg.payload, 'utf-8')
     event_manager(msg.topic, payload)
+    print("{}\nTOPIC: {}\nPAYLOAD: {}\n ".format(datetime.datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S"), msg.topic, payload))
 
 
 def event_manager(topic, payload):
