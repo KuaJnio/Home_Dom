@@ -28,18 +28,29 @@ tz = pytz.timezone('Europe/Paris')
 RENNES = 2983990
 APIKEY = "98a19c144b3105dc774646a8a9429a52"
 
-"""
+
 def weather_forecast():
     url = "http://api.openweathermap.org/data/2.5/forecast?id={}&APPID={}".format(RENNES, APIKEY)
     res = urllib.request.urlopen(url)
     res_body = res.read()
     j = json.loads(res_body.decode("utf-8"))
     forecast = j['list']
+    string = ""
 
     for element in forecast:
         element = json.loads(list_sample)
-        print("{} ==> {}%H / {}°C".format(element['dt_txt'], element['main']['humidity'], round((element['main']['temp'] - 273.15), 1)))
-"""
+        string += "{} ==> {}%H / {}°C\n".format(element['dt_txt'], element['main']['humidity'], round((element['main']['temp'] - 273.15), 1))
+    
+    print(string)
+
+    hd_payload = json.JSONEncoder().encode({
+        "HD_FEATURE": "HD_WEATHER",
+        "HD_IDENTIFIER": "NONE",
+        "HD_VALUE": string,
+        "HD_TIMESTAMP": int(time())
+    })
+    return hd_payload
+
 
 
 def weather_current():
@@ -112,8 +123,14 @@ def event_manager(topic, payload):
     try:
         json_payload = json.loads(payload)
         target = json_payload['target']
-        if target == 'hometts':
-            pass
+        if target == 'weather':
+            weather_type = json_payload['type']
+            if weather_type == "current":
+                mqtt_client.publish("inputs", weather_current())
+            elif weather_type == "forecast":
+                mqtt_client.publish("inputs", weather_forecast())
+                
+            
     except Exception as e:
         print("Error in event_manager(): {}".format(e))
 

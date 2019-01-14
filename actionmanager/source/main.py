@@ -96,6 +96,19 @@ def event_manager(topic, payload):
                 enable_regex("PRESENCE_SALON_ON")
             elif name == "PRESENCE_SALON_DISABLE":
                 disable_regex("PRESENCE_SALON_ON")
+            elif name == "REQUEST_WEATHER_CURRENT":
+                payload = json.JSONEncoder().encode({
+                    "target": "weather",
+                    "type": "current"
+                })
+                mqtt_client.publish("outputs", payload)
+            elif name == "REQUEST_WEATHER_FORECAST":
+                payload = json.JSONEncoder().encode({
+                    "target": "weather",
+                    "type": "forecast"
+                })
+                mqtt_client.publish("outputs", payload)
+                
     except Exception as e:
         print("Error in event_manager(): {}".format(e))
 
