@@ -73,16 +73,16 @@ def event_manager(topic, payload):
             feature = json_payload['HD_FEATURE']
             #identifier = json_payload['HD_IDENTIFIER']
             value = json_payload['HD_VALUE']
-            if feature == "HD_CONTACT":
-                if value == 0:
-                    send_hometts_command("Porte ouverte")
-                elif value == 1:
-                    send_hometts_command("Porte fermer")
-            elif feature == "HD_TEMPERATURE":
-                send_hometts_command("Il fait {} degrer".format(value).replace('.', ','))
-            elif feature == "HD_HUMIDITY":
-                send_hometts_command("Lumiditer est de {} pourcent".format(value).replace('.', ','))
-            elif feature == "HD_WEATHER":
+            #if feature == "HD_CONTACT":
+            #    if value == 0:
+            #        send_hometts_command("Porte ouverte")
+            #    elif value == 1:
+            #        send_hometts_command("Porte fermer")
+            #elif feature == "HD_TEMPERATURE":
+            #    send_hometts_command("Il fait {} degrer".format(value).replace('.', ','))
+            #elif feature == "HD_HUMIDITY":
+            #    send_hometts_command("Lumiditer est de {} pourcent".format(value).replace('.', ','))
+            if feature == "HD_WEATHER":
                 send_hometts_command(value)
             return "OK"
         elif topic == "events":
@@ -92,10 +92,10 @@ def event_manager(topic, payload):
                 send_lifx_command("on", GOLD)
             elif name == "LAMPE_CUISINE_OFF":
                 send_lifx_command("off", GOLD)
-            elif name == "PRESENCE_SALON_ENABLE":
-                enable_regex("PRESENCE_SALON_ON")
-            elif name == "PRESENCE_SALON_DISABLE":
-                disable_regex("PRESENCE_SALON_ON")
+            #elif name == "PRESENCE_SALON_ENABLE":
+            #    enable_regex("PRESENCE_SALON_ON")
+            #elif name == "PRESENCE_SALON_DISABLE":
+            #    disable_regex("PRESENCE_SALON_ON")
             elif name == "REQUEST_WEATHER_CURRENT":
                 payload = json.JSONEncoder().encode({
                     "target": "weather",
@@ -108,7 +108,7 @@ def event_manager(topic, payload):
                     "type": "forecast"
                 })
                 mqtt_client.publish("outputs", payload)
-                
+
     except Exception as e:
         print("Error in event_manager(): {}".format(e))
 
