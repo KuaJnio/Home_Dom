@@ -9,26 +9,24 @@ TOPICS = None
 def on_connect(client, userdata, flags, rc):
     try:
         if rc == 0:
-            logging.debug("Connection to broker OK")
+            logging.info("Connection to broker OK")
         else:
-            logging.debug("Connection to broker KO, with result code {}".format(rc))
+            logging.warning("Connection to broker KO, with result code {}".format(rc))
         for topic in TOPICS:
             client.subscribe(topic)
             logging.debug("Subscribed to \"{}\"".format(topic))
     except Exception as e:
-        logging.debug("Error in on_connect(): {}".format(e))
+        logging.error("Error in on_connect(): {}".format(e))
 
 
 def on_disconnect(client, userdata, rc):
-    logging.debug("Disconnected from broker with result code {}".format(rc))
+    logging.warning("Disconnected from broker with result code {}".format(rc))
     connected = False
     while not connected:
         try:
-            logging.debug("Trying to reconnect to broker...")
             rc = client.reconnect()
-        except Exception as e:
-            logging.debug("Error in on_disconnect(): {}".format(e))
-            sleep(2)
+        except Exception:
+            sleep(1)
         if rc == 0:
             connected = True
 
@@ -44,27 +42,32 @@ class MqttClient(Thread):
             self.addr = addr
             self.port = port
         except Exception as e:
-            logging.debug("Error in MqttClient.__init__(): {}".format(e))
+            logging.error("Error in MqttClient.__init__(): {}".format(e))
 
     def run(self):
         try:
-            self.mqtt_client.connect(host=self.addr, port=self.port)
-            logging.debug("Connecting to broker {}:{}...".format(self.addr, self.port))
+            logging.info("Connecting to broker {}:{}...".format(self.addr, self.port))
+            connected = False
+            while not connected:
+                try:
+                    self.mqtt_client.connect(host=self.addr, port=self.port)
+                    connected = True
+                except Exception:
+                    sleep(1)
             self.mqtt_client.loop_forever()
         except Exception as e:
-            logging.debug("Error in MqttClient.run(): {}".format(e))
+            logging.error("Error in MqttClient.run(): {}".format(e))
 
     def publish(self, topic, message):
         try:
-            #logging.debug("Publishing to broker {}:{} in topic {}".format(self.addr, self.port, topic))
+            logging.debug("Publishing to broker {}:{} in topic {}".format(self.addr, self.port, topic))
             rc, count = self.mqtt_client.publish(topic, message)
             if rc == 0:
-                #logging.debug("Publish OK")
-                pass
+                logging.debug("Publish OK")
             else:
-                logging.debug("Publish KO, with result {}".format(self.publish_errors(rc)))
+                logging.warning("Publish KO, with result {}".format(self.publish_errors(rc)))
         except Exception as e:
-            logging.debug("Error in MqttClient.publish(): {}".format(e))
+            logging.error("Error in MqttClient.publish(): {}".format(e))
 
     @staticmethod
     def publish_errors(error):
@@ -102,12 +105,12 @@ class MqttClient(Thread):
             elif error == 14:
                 return "MQTT_ERR_ERRNO"
         except Exception as e:
-            logging.debug("Error in MqttClient.publish_errors(): {}".format(e))
+            logging.error("Error in MqttClient.publish_errors(): {}".format(e))
 
 
 def create_mqtt_client(addr, port, on_message, topics):
     try:
-        logging.debug("Creating mqtt client on broker : {}:{}".format(addr, port))
+        logging.info("Creating mqtt client on broker : {}:{}".format(addr, port))
         global TOPICS
         TOPICS = topics
         mqtt_cli_tmp = MqttClient(addr, port, on_message)
@@ -115,4 +118,4 @@ def create_mqtt_client(addr, port, on_message, topics):
         mqtt_cli_tmp.start()
         return mqtt_cli_tmp
     except Exception as e:
-        logging.debug("Error in create_mqtt_client(): {}".format(e))
+        logging.error("Error in create_mqtt_client(): {}".format(e))

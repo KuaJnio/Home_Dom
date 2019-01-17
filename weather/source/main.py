@@ -125,9 +125,9 @@ def event_manager(topic, payload):
         if target == 'weather':
             weather_type = json_payload['type']
             if weather_type == "current":
-                mqtt_client.publish("inputs", weather_current())
+                weather_current()
             elif weather_type == "forecast":
-                mqtt_client.publish("inputs", weather_forecast())
+                weather_forecast()
 
     except Exception as e:
         logging.debug("Error in event_manager(): {}".format(e))
