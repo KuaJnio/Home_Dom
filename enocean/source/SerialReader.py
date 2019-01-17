@@ -4,6 +4,7 @@ from threading import Thread
 import time
 import datetime
 import codecs
+import logging
 
 u8crc8table = [
     0x00, 0x07, 0x0e, 0x09, 0x1c, 0x1b, 0x12, 0x15,
@@ -49,7 +50,7 @@ class SerialReader(Thread):
         try:
             self.ser = serial.Serial(self.device, 57600, timeout=0)
         except serial.SerialException:
-            print('Could not connect to serial device' + device)
+            logging.debug('Could not connect to serial device' + device)
         self.app_version = ''
         self.api_version = ''
         self.chip_id = ''
@@ -173,11 +174,11 @@ class SerialReader(Thread):
                 tmp_str += self.serial_data[i] + self.serial_data[i + 1]
                 i += 2
             self.base_id = tmp_str
-            print("BaseId: " + tmp_str)
+            logging.debug("BaseId: " + tmp_str)
 
             self.base_id_writes = self.serial_data[10] + self.serial_data[11]
         else:
-            print("Error in response data:" + self.serial_data[0])
+            logging.debug("Error in response data:" + self.serial_data[0])
 
     def run(self):
         self.command_read_base_id()

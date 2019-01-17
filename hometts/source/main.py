@@ -6,10 +6,13 @@ import json
 import os
 from MQTTClient import create_mqtt_client
 from get_config import get_parameter
+import logging
+from homedom_logger import set_logger
+set_logger("hometts", logging.DEBUG)
 
 
 def signal_handler(signal, frame):
-    print("Interpreted signal {}, exiting now...".format(signal))
+    logging.debug("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
 
@@ -35,11 +38,11 @@ def event_manager(topic, payload):
         if target == 'hometts':
             tts = json_payload['tts']
             tts_lock.acquire()
-            print("/usr/bin/mpg123 'http://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={}&tl=fr' > /dev/null 2>&1".format(tts))
+            logging.debug("/usr/bin/mpg123 'http://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={}&tl=fr' > /dev/null 2>&1".format(tts))
             os.system("/usr/bin/mpg123 'http://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={}&tl=fr' > /dev/null 2>&1".format(tts))
             tts_lock.release()
     except Exception as e:
-        print("Error in event_manager(): {}".format(e))
+        logging.debug("Error in event_manager(): {}".format(e))
 
 
 if __name__ == '__main__':

@@ -8,10 +8,13 @@ import urllib.request
 import pytz
 import datetime
 from googletrans import Translator
+import logging
+from homedom_logger import set_logger
+set_logger("weather", logging.DEBUG)
 
 
 def signal_handler(signal, frame):
-    print("Interpreted signal {}, exiting now...".format(signal))
+    logging.debug("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
 
@@ -127,7 +130,7 @@ def event_manager(topic, payload):
                 mqtt_client.publish("inputs", weather_forecast())
 
     except Exception as e:
-        print("Error in event_manager(): {}".format(e))
+        logging.debug("Error in event_manager(): {}".format(e))
 
 
 if __name__ == '__main__':

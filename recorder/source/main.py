@@ -8,6 +8,9 @@ from database import DatabaseHandler
 from flask import Flask, jsonify
 import datetime
 import pytz
+import logging
+from homedom_logger import set_logger
+set_logger("recorder", logging.DEBUG)
 
 
 def signal_handler(signal, frame):

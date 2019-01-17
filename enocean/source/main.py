@@ -4,10 +4,13 @@ import sys
 import signal
 from MQTTClient import create_mqtt_client
 from get_config import get_parameter
+import logging
+from homedom_logger import set_logger
+set_logger("enocean", logging.DEBUG)
 
 
 def signal_handler(signal, frame):
-    print("Interpreted signal {}, exiting now...".format(signal))
+    logging.debug("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
 
@@ -30,7 +33,7 @@ def event_manager(topic, payload):
     try:
         pass
     except Exception as e:
-        print("Error in event_manager(): {}".format(e))
+        logging.debug("Error in event_manager(): {}".format(e))
 
 
 if __name__ == '__main__':

@@ -11,3 +11,5 @@ RUN apt install -y apt-transport-https
 COPY requirements.txt /root
 
 RUN pip3 install -U -r /root/requirements.txt
+
+RUN mkdir /var/log/homedom

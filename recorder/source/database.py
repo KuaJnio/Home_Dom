@@ -1,6 +1,7 @@
 from threading import Lock
 from sqlite3 import connect as sqlite3_connect
 from models import Data
+import logging
 
 
 class DatabaseHandler(object):
