@@ -71,7 +71,6 @@ def enable_regex(regex):
 
 def event_manager(topic, payload):
     try:
-        logging.debug("{} :: {}".format(topic, payload))
         if topic == "inputs":
             json_payload = json.loads(payload)
             feature = json_payload['HD_FEATURE']

@@ -29,13 +29,15 @@ function onMessageArrived(message) {
 }
 
 $( ".on" ).click(function() {
-    message = new Paho.MQTT.Message(JSON.stringify({"HD_FEATURE": "HD_BUTTON", "HD_IDENTIFIER": this.id, "HD_VALUE": 1}));
+    time = new Date().getTime() / 1000;
+    message = new Paho.MQTT.Message(JSON.stringify({"HD_FEATURE": "HD_BUTTON", "HD_IDENTIFIER": this.id, "HD_VALUE": 1, "HD_TIMESTAMP": time}));
     message.destinationName = "inputs";
     client.send(message);
 });
 
 $( ".off" ).click(function() {
-    message = new Paho.MQTT.Message(JSON.stringify({"HD_FEATURE": "HD_BUTTON", "HD_IDENTIFIER": this.id, "HD_VALUE": 0}));
+    time = new Date().getTime() / 1000;
+    message = new Paho.MQTT.Message(JSON.stringify({"HD_FEATURE": "HD_BUTTON", "HD_IDENTIFIER": this.id, "HD_VALUE": 0, "HD_TIMESTAMP": time}));
     message.destinationName = "inputs";
     client.send(message);
 });

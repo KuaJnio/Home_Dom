@@ -60,10 +60,11 @@ class MqttClient(Thread):
 
     def publish(self, topic, message):
         try:
-            logging.debug("Publishing to broker {}:{} in topic {}".format(self.addr, self.port, topic))
+            #logging.debug("Publishing to broker {}:{} in topic {}".format(self.addr, self.port, topic))
             rc, count = self.mqtt_client.publish(topic, message)
             if rc == 0:
-                logging.debug("Publish OK")
+                #logging.debug("Publish OK")
+                pass
             else:
                 logging.warning("Publish KO, with result {}".format(self.publish_errors(rc)))
         except Exception as e:

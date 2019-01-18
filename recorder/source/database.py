@@ -17,7 +17,7 @@ class DatabaseHandler(object):
         query = '''
                     CREATE TABLE IF NOT EXISTS data
                     (
-                        timestamp INTEGER,
+                        timestamp REAL,
                         feature TEXT,
                         identifier TEXT,
                         value TEXT

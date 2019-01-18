@@ -132,7 +132,7 @@ class EnOcean:
             "HD_FEATURE": feature,
             "HD_IDENTIFIER": identifier,
             "HD_VALUE": value,
-            "HD_TIMESTAMP": int(time.time())
+            "HD_TIMESTAMP": round(time.time(), 3)
         })
         return hd_payload
 

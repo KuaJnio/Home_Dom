@@ -6,7 +6,6 @@ from get_config import get_parameter
 from models import Data
 from database import DatabaseHandler
 from flask import Flask, jsonify
-import datetime
 import pytz
 import logging
 from homedom_logger import set_logger
@@ -14,7 +13,7 @@ set_logger("recorder", logging.DEBUG)
 
 
 def signal_handler(signal, frame):
-    print("Interpreted signal {}, exiting now...".format(signal))
+    logging.debug("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
 
@@ -35,7 +34,7 @@ tz = pytz.timezone('Europe/Paris')
 def on_message(client, userdata, msg):
     payload = str(msg.payload, 'utf-8')
     event_manager(msg.topic, payload)
-    print("{}\nTOPIC: {}\nPAYLOAD: {}\n ".format(datetime.datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S"), msg.topic, payload))
+    logging.debug("TOPIC: {} PAYLOAD: {}".format(msg.topic, payload))
 
 
 def event_manager(topic, payload):
@@ -44,7 +43,7 @@ def event_manager(topic, payload):
         data = Data.from_dict(json_payload)
         database_handler.insert_data(data)
     except Exception as e:
-        print("Error in event_manager(): {}".format(e))
+        logging.error("Error in event_manager(): {}".format(e))
 
 
 @app.route('/data', methods=['GET'])
@@ -65,7 +64,7 @@ def get_data():
 
         return jsonify(plot_data), 200
     except Exception as e:
-        print("Error in get_data: {}".format(e))
+        logging.error("Error in get_data: {}".format(e))
         return "", 500
 
 

@@ -91,7 +91,7 @@ def weather_current():
         "HD_FEATURE": "HD_WEATHER",
         "HD_IDENTIFIER": "NONE",
         "HD_VALUE": weather_data_to_string(data),
-        "HD_TIMESTAMP": int(time())
+        "HD_TIMESTAMP": round(time(), 3)
     })
 
     mqtt_client.publish("inputs", hd_payload)
@@ -108,7 +108,7 @@ def weather_forecast():
             "HD_FEATURE": "HD_WEATHER",
             "HD_IDENTIFIER": "NONE",
             "HD_VALUE": weather_data_to_string(forecast[i]),
-            "HD_TIMESTAMP": int(time())
+            "HD_TIMESTAMP": round(time(), 3)
         })
         mqtt_client.publish("inputs", hd_payload)
 
