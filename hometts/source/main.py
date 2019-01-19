@@ -33,6 +33,8 @@ def on_message(client, userdata, msg):
 
 def event_manager(topic, payload):
     try:
+        logging.warning(payload)
+        logging.warning(topic)
         json_payload = json.loads(payload)
         target = json_payload['target']
         if target == 'hometts':

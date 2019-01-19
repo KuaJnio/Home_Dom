@@ -88,13 +88,10 @@ def weather_current():
     data = json.loads(res_body.decode("utf-8"))
 
     hd_payload = json.JSONEncoder().encode({
-        "HD_FEATURE": "HD_WEATHER",
-        "HD_IDENTIFIER": "NONE",
-        "HD_VALUE": weather_data_to_string(data),
-        "HD_TIMESTAMP": round(time(), 3)
+        "target": "hometts",
+        "tts": weather_data_to_string(data)
     })
-
-    mqtt_client.publish("inputs", hd_payload)
+    mqtt_client.publish("outputs", hd_payload)
 
 
 def weather_forecast():
@@ -105,12 +102,10 @@ def weather_forecast():
     forecast = j['list']
     for i in range(0, FORECAST_SIZE):
         hd_payload = json.JSONEncoder().encode({
-            "HD_FEATURE": "HD_WEATHER",
-            "HD_IDENTIFIER": "NONE",
-            "HD_VALUE": weather_data_to_string(forecast[i]),
-            "HD_TIMESTAMP": round(time(), 3)
+            "target": "hometts",
+            "tts": weather_data_to_string(forecast[i])
         })
-        mqtt_client.publish("inputs", hd_payload)
+        mqtt_client.publish("outputs", hd_payload)
 
 
 def on_message(client, userdata, msg):

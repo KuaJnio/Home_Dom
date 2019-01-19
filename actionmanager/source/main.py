@@ -61,6 +61,14 @@ def send_hometts_command(tts):
     mqtt_client.publish("outputs", payload)
 
 
+def send_weather_request(type):
+    payload = json.JSONEncoder().encode({
+        "target": "weather",
+        "type": type
+    })
+    mqtt_client.publish("outputs", payload)
+
+
 def disable_regex(regex):
     requests.post("{}/regex/{}/disable".format(HOMEVENTS_URL, regex))
 
@@ -72,22 +80,11 @@ def enable_regex(regex):
 def event_manager(topic, payload):
     try:
         if topic == "inputs":
-            json_payload = json.loads(payload)
-            feature = json_payload['HD_FEATURE']
+            pass
+            #json_payload = json.loads(payload)
+            #feature = json_payload['HD_FEATURE']
             #identifier = json_payload['HD_IDENTIFIER']
-            value = json_payload['HD_VALUE']
-            #if feature == "HD_CONTACT":
-            #    if value == 0:
-            #        send_hometts_command("Porte ouverte")
-            #    elif value == 1:
-            #        send_hometts_command("Porte fermer")
-            #elif feature == "HD_TEMPERATURE":
-            #    send_hometts_command("Il fait {} degrer".format(value).replace('.', ','))
-            #elif feature == "HD_HUMIDITY":
-            #    send_hometts_command("Lumiditer est de {} pourcent".format(value).replace('.', ','))
-            if feature == "HD_WEATHER":
-                send_hometts_command(value)
-            return "OK"
+            #value = json_payload['HD_VALUE']
         elif topic == "events":
             json_payload = json.loads(payload)
             name = json_payload['name']
@@ -95,22 +92,12 @@ def event_manager(topic, payload):
                 send_lifx_command("on", GOLD)
             elif name == "LAMPE_CUISINE_OFF":
                 send_lifx_command("off", GOLD)
-            #elif name == "PRESENCE_SALON_ENABLE":
-            #    enable_regex("PRESENCE_SALON_ON")
-            #elif name == "PRESENCE_SALON_DISABLE":
-            #    disable_regex("PRESENCE_SALON_ON")
             elif name == "REQUEST_WEATHER_CURRENT":
-                payload = json.JSONEncoder().encode({
-                    "target": "weather",
-                    "type": "current"
-                })
-                mqtt_client.publish("outputs", payload)
+                send_weather_request("current")
             elif name == "REQUEST_WEATHER_FORECAST":
-                payload = json.JSONEncoder().encode({
-                    "target": "weather",
-                    "type": "forecast"
-                })
-                mqtt_client.publish("outputs", payload)
+                send_weather_request("forecast")
+
+        return "OK"
 
     except Exception as e:
         logging.debug("Error in event_manager(): {}".format(e))
