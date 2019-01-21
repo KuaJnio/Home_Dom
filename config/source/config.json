@@ -12,5 +12,6 @@
     "lifx_topics":          ["outputs"],
     "recorder_topics":      ["inputs"],
     "weather_topics":       ["outputs"],
+    "discordinho_topics":   ["#"],
     "database_path":        "/home/data.db"
 }

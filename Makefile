@@ -1,4 +1,4 @@
-.PHONY: actionmanager base common config enocean hometts homevents lifx mqtt recorder webapp weather
+.PHONY: actionmanager base common config enocean hometts homevents lifx mqtt recorder webapp weather discordinho
 BUILD="docker build --pull -t registry:5000/"
 PUSH="docker push registry:5000/"
 PULL="pull registry:5000/"
@@ -16,6 +16,7 @@ deploy-common:
 	cp common/MQTTClient.py recorder/source
 	cp common/MQTTClient.py webapp/source
 	cp common/MQTTClient.py weather/source
+	cp common/MQTTClient.py discordinho/source
 
 	cp common/get_config.py actionmanager/source
 	cp common/get_config.py homevents/source
@@ -25,6 +26,7 @@ deploy-common:
 	cp common/get_config.py recorder/source
 	cp common/get_config.py webapp/source
 	cp common/get_config.py weather/source
+	cp common/get_config.py discordinho/source
 
 	cp common/homedom_logger.py actionmanager/source
 	cp common/homedom_logger.py homevents/source
@@ -34,6 +36,7 @@ deploy-common:
 	cp common/homedom_logger.py recorder/source
 	cp common/homedom_logger.py webapp/source
 	cp common/homedom_logger.py weather/source
+	cp common/homedom_logger.py discordinho/source
 
 	cp common/homedom_logger.py config/source
 
@@ -41,7 +44,7 @@ clean-target:
 	$(TARGET) rm -f mqtt config actionmanager enocean homevents hometts lifx recorder webapp weather ||:
 
 build-base:
-	"$(BUILD)base" base
+	"$(BUILD)base" base 
 	"$(PUSH)base"
 
 base:
@@ -177,6 +180,19 @@ weather:
 	make build-weather
 	make run-weather
 
+build-discordinho:
+	"$(BUILD)discordinho" discordinho
+	"$(PUSH)discordinho"
+
+run-discordinho:
+	$(TARGET) rm -f discordinho ||:
+	$(TARGET) pull registry:5000/discordinho
+	$(TARGET) run -d --restart always --name discordinho -v /mnt/disk/logs:/var/log/homedom registry:5000/discordinho
+
+discordinho:
+	make build-discordinho
+	make run-discordinho
+
 build:
 	make deploy-common
 	make build-base
@@ -190,11 +206,12 @@ build:
 	make build-recorder
 	make build-webapp
 	make build-weather
+	make build-discordinho
 
 run:
 	make run-mqtt
 	make run-config
-	sleep 4
+	sleep 3
 	make run-actionmanager
 	make run-enocean
 	make run-hometts
@@ -203,6 +220,7 @@ run:
 	make run-recorder
 	make run-webapp
 	make run-weather
+	make run-discordinho
 
 all:
 	make clean-target
