@@ -13,7 +13,7 @@ set_logger("recorder", logging.DEBUG)
 
 
 def signal_handler(signal, frame):
-    logging.debug("Interpreted signal {}, exiting now...".format(signal))
+    logging.info("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
 
@@ -34,7 +34,6 @@ tz = pytz.timezone('Europe/Paris')
 def on_message(client, userdata, msg):
     payload = str(msg.payload, 'utf-8')
     event_manager(msg.topic, payload)
-    logging.debug("TOPIC: {} PAYLOAD: {}".format(msg.topic, payload))
 
 
 def event_manager(topic, payload):

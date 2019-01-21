@@ -41,10 +41,10 @@ deploy-common:
 	cp common/homedom_logger.py config/source
 
 clean-target:
-	$(TARGET) rm -f mqtt config actionmanager enocean homevents hometts lifx recorder webapp weather ||:
+	$(TARGET) rm -f mqtt config actionmanager enocean homevents hometts lifx recorder webapp weather discordinho ||:
 
 build-base:
-	"$(BUILD)base" base 
+	"$(BUILD)base" base
 	"$(PUSH)base"
 
 base:

@@ -12,7 +12,7 @@ set_logger("discordinho", logging.DEBUG)
 
 
 def signal_handler(signal, frame):
-    logging.debug("Interpreted signal {}, exiting now...".format(signal))
+    logging.info("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
 
@@ -26,18 +26,16 @@ mqtt_client = None
 
 #discord specific
 
-client          = discord.Client()
-server_name     = 'Home_Dom'
-channel_inputs  = None
+client = discord.Client()
+server_name = 'Home_Dom'
+channel_inputs = None
 channel_outputs = None
-channel_events  = None
-
-
+channel_events = None
 
 
 @client.event
 async def on_ready():
-    logging.debug(server_name)
+    logging.info(server_name)
     global channel_inputs
     channel_inputs = discord.utils.get(client.get_all_channels(), server__name=server_name, name="inputs")
     global channel_outputs

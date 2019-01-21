@@ -178,7 +178,7 @@ class SerialReader(Thread):
 
             self.base_id_writes = self.serial_data[10] + self.serial_data[11]
         else:
-            logging.debug("Error in response data:" + self.serial_data[0])
+            logging.error("Error in response data:" + self.serial_data[0])
 
     def run(self):
         self.command_read_base_id()

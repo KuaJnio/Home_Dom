@@ -12,7 +12,7 @@ set_logger("hometts", logging.DEBUG)
 
 
 def signal_handler(signal, frame):
-    logging.debug("Interpreted signal {}, exiting now...".format(signal))
+    logging.info("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
 
@@ -33,8 +33,6 @@ def on_message(client, userdata, msg):
 
 def event_manager(topic, payload):
     try:
-        logging.warning(payload)
-        logging.warning(topic)
         json_payload = json.loads(payload)
         target = json_payload['target']
         if target == 'hometts':
@@ -44,7 +42,7 @@ def event_manager(topic, payload):
             os.system("/usr/bin/mpg123 'http://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={}&tl=fr' > /dev/null 2>&1".format(tts))
             tts_lock.release()
     except Exception as e:
-        logging.debug("Error in event_manager(): {}".format(e))
+        logging.error("Error in event_manager(): {}".format(e))
 
 
 if __name__ == '__main__':

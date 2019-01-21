@@ -11,7 +11,7 @@ set_logger("actionmanager", logging.DEBUG)
 
 
 def signal_handler(signal, frame):
-    logging.debug("Interpreted signal {}, exiting now...".format(signal))
+    logging.info("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
 
@@ -100,7 +100,7 @@ def event_manager(topic, payload):
         return "OK"
 
     except Exception as e:
-        logging.debug("Error in event_manager(): {}".format(e))
+        logging.error("Error in event_manager(): {}".format(e))
 
 
 if __name__ == '__main__':

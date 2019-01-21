@@ -7,7 +7,7 @@ set_logger("webapp", logging.DEBUG)
 
 
 def signal_handler(signal, frame):
-    logging.debug("Interpreted signal {}, exiting now...".format(signal))
+    logging.info("Interpreted signal {}, exiting now...".format(signal))
     sys.exit(0)
 
 
@@ -22,7 +22,7 @@ def home():
     try:
         return render_template('home.html')
     except Exception as e:
-        logging.debug("Error in home: {}".format(e))
+        logging.error("Error in home: {}".format(e))
         return str(e)
 
 
@@ -31,7 +31,7 @@ def actuators():
     try:
         return render_template('actuators.html')
     except Exception as e:
-        logging.debug("Error in home: {}".format(e))
+        logging.error("Error in home: {}".format(e))
         return str(e)
 
 

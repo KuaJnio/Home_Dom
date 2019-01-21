@@ -14,7 +14,7 @@ def on_connect(client, userdata, flags, rc):
             logging.warning("Connection to broker KO, with result code {}".format(rc))
         for topic in TOPICS:
             client.subscribe(topic)
-            logging.debug("Subscribed to \"{}\"".format(topic))
+            logging.info("Subscribed to \"{}\"".format(topic))
     except Exception as e:
         logging.error("Error in on_connect(): {}".format(e))
 
