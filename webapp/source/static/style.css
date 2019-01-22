@@ -6,6 +6,9 @@ section {
     outline: none;
 }
 
+.header {
+    margin-bottom: 20px;
+}
 .section_home .container {
     margin-bottom: 15px;
     border-radius: 5px;

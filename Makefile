@@ -1,4 +1,4 @@
-.PHONY: actionmanager base common config enocean hometts homevents lifx mqtt recorder webapp weather discordinho
+.PHONY: actionmanager base common config discordinho enocean hometts homevents lifx mqtt recorder weather webapp
 BUILD="docker build --pull -t registry:5000/"
 PUSH="docker push registry:5000/"
 PULL="pull registry:5000/"
