@@ -8,7 +8,7 @@ from MQTTClient import create_mqtt_client
 from get_config import get_parameter
 import logging
 from homedom_logger import set_logger
-set_logger("discordinho", logging.DEBUG)
+set_logger("discordinho", logging.INFO)
 
 
 def signal_handler(signal, frame):
