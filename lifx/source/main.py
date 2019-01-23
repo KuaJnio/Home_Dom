@@ -1,4 +1,5 @@
 from time import sleep
+from threading import Thread
 import lifxlan
 import sys
 import signal
@@ -58,7 +59,27 @@ def event_manager(topic, payload):
         logging.error("Error in event_manager(): {}".format(e))
 
 
+def create_healthcheck(app_name):
+    class HealthCheck(Thread):
+        def __init__(self, name):
+            Thread.__init__(self)
+            self.name = name
+
+        def run(self):
+            try:
+                while True:
+                    mqtt_client.publish("status", self.name)
+                    sleep(1)
+            except Exception as e:
+                logging.error("Error in HealthCheck.run(): {}".format(e))
+
+    healthcheck = HealthCheck(app_name)
+    healthcheck.daemon = True
+    healthcheck.start()
+
+
 if __name__ == '__main__':
     mqtt_client = create_mqtt_client(MQTT_HOST, MQTT_PORT, on_message, MQTT_TOPICS)
+    create_healthcheck("lifx")
     while True:
         sleep(1)

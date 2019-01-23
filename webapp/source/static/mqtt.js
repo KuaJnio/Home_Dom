@@ -23,61 +23,21 @@ function onConnectionLost(responseObject) {
     }
 }
 
+function appOn(app) {
+    $(`.${app}`).removeClass("has-background-danger");
+    $(`.${app}`).addClass("has-background-primary");
+}
+
+function appOff(app) {
+    $(`.${app}`).removeClass("has-background-primary");
+    $(`.${app}`).addClass("has-background-danger");
+}
+
 // called when a message arrives
 function onMessageArrived(message) {
-    console.log("onMessageArrived:"+message.payloadString);
-    
+    //console.log("onMessageArrived:"+message.payloadString);
     if (message.destinationName == "status") {
-        if (message.payloadString == actionmanager)
-        {
-            $(".actionmanager").removeClass("has-background-danger");
-            $(".actionmanager").addClass("has-background-primary");
-        }
-        else if (message.payloadString == config)
-        {
-            $(".config").removeClass("has-background-danger");
-            $(".config").addClass("has-background-primary");
-        }
-        else if (message.payloadString == weather)
-        {
-            $(".weather").removeClass("has-background-danger");
-            $(".weather").addClass("has-background-primary");
-        }
-        else if (message.payloadString == webapp)
-        {
-            $(".webapp").removeClass("has-background-danger");
-            $(".webapp").addClass("has-background-primary");
-        }
-        else if (message.payloadString == homevents)
-        {
-            $(".homevents").removeClass("has-background-danger");
-            $(".homevents").addClass("has-background-primary");
-        }
-        else if (message.payloadString == discordinho)
-        {
-            $(".discordinho").removeClass("has-background-danger");
-            $(".discordinho").addClass("has-background-primary");
-        }
-        else if (message.payloadString == enocean)
-        {
-            $(".enocean").removeClass("has-background-danger");
-            $(".enocean").addClass("has-background-primary");
-        }
-        else if (message.payloadString == lifx)
-        {
-            $(".lifx").removeClass("has-background-danger");
-            $(".lifx").addClass("has-background-primary");
-        }
-        else if (message.payloadString == recorder)
-        {
-            $(".recorder").removeClass("has-background-danger");
-            $(".recorder").addClass("has-background-primary");
-        }
-        else if (message.payloadString == hometts)
-        {
-            $(".hometts").removeClass("has-background-danger");
-            $(".hometts").addClass("has-background-primary");
-        }
+        appOn(message.payloadString);
     }
 }
 

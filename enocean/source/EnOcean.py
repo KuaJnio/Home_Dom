@@ -3,6 +3,26 @@ import time
 import logging
 
 
+def enocean_to_homedom(eo_id):
+    if eo_id == "01A4C431":
+        return "EO_TEMPHUM_1"
+    elif eo_id == "01A4702D":
+        return "EO_TEMPHUM_2"
+    elif eo_id == "050B3CBE":
+        return "EO_PRESENCE_1"
+    elif eo_id == "050B3D62":
+        return "EO_PRESENCE_2"
+    elif eo_id == "01805C9E":
+        return "EO_CONTACT_1"
+    elif eo_id == "050CB8B3":
+        return "EO_PRESENCE_3"
+    elif eo_id == "0029D193":
+        return "EO_SWITCH_WHITE"
+    else:
+        logging.warning(eo_id)
+        return eo_id
+
+
 class EnOcean:
     def __init__(self, eo_data):
         self.data = eo_data
@@ -27,11 +47,11 @@ class EnOcean:
 
     def get_id(self):
         if self.get_rorg() == 'f6':
-            return 'HD_' + self.data[4:12].upper()
+            return 'HD_' + enocean_to_homedom(self.data[4:12].upper())
         elif self.get_rorg() == 'a5':
-            return 'HD_' + self.data[10:18].upper()
+            return 'HD_' + enocean_to_homedom(self.data[10:18].upper())
         elif self.get_rorg() == 'd5':
-            return 'HD_' + self.data[4:12].upper()
+            return 'HD_' + enocean_to_homedom(self.data[4:12].upper())
         elif self.get_rorg() == 'd2':
             return 'HD_UNKNOWN'
         else:
