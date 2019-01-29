@@ -1,4 +1,5 @@
 from SerialReader import create_serial_reader
+import json
 from time import sleep
 from threading import Thread
 import sys
@@ -23,6 +24,7 @@ MQTT_HOST = get_parameter("mqtt_host")
 MQTT_PORT = get_parameter("mqtt_port")
 MQTT_TOPICS = get_parameter("enocean_topics")
 mqtt_client = None
+serial_thread = None
 
 
 def on_message(client, userdata, msg):
@@ -32,7 +34,13 @@ def on_message(client, userdata, msg):
 
 def event_manager(topic, payload):
     try:
-        pass
+        json_payload = json.loads(payload)
+        if topic == "inputs":
+            if (json_payload["HD_VALUE"] == 2) and (json_payload["HD_IDENTIFIER"] == "HD_EO_REMOTE_PINK"):
+                serial_thread.send_vld_off()
+            elif (json_payload["HD_VALUE"] == 1) and (json_payload["HD_IDENTIFIER"] == "HD_EO_REMOTE_PINK"):
+                serial_thread.send_vld_on()
+
     except Exception as e:
         logging.error("Error in event_manager(): {}".format(e))
 

@@ -6,6 +6,9 @@ import datetime
 import codecs
 import logging
 
+
+start = 0
+
 u8crc8table = [
     0x00, 0x07, 0x0e, 0x09, 0x1c, 0x1b, 0x12, 0x15,
     0x38, 0x3f, 0x36, 0x31, 0x24, 0x23, 0x2a, 0x2d,
@@ -112,7 +115,9 @@ class SerialReader(Thread):
             if self.ser.inWaiting() != 0:
                 s = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')
             while self.ser.inWaiting() < 5:
-                time.sleep(0.1)
+                time.sleep(0.05)
+        global start
+        start = time.time()
         self.data_length = str(codecs.encode(self.ser.read(2), 'hex'), 'utf-8')  # read length field
         self.op_data_length = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')  # read op length field
         self.packet_type = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')  # read packet type field
@@ -121,7 +126,7 @@ class SerialReader(Thread):
         if self.check_header_crc():
             self.total_data_length = (int(self.data_length, 16) + int(self.op_data_length, 16))
             while self.ser.inWaiting() < self.total_data_length:
-                time.sleep(0.1)
+                time.sleep(0.05)
             serial_data = str(codecs.encode(self.ser.read(self.total_data_length + 1), 'hex'), 'utf-8')
             if self.check_data_crc(serial_data):
                 return serial_data
@@ -142,29 +147,40 @@ class SerialReader(Thread):
             u8crc = self.proccrc8(u8crc, telegram_data[index])
         return u8crc
 
-    def calc_esp3header(self, packet_type, packet_data, *arg):  # assumes 0 optional data
+    def calc_esp3header(self, packet_type, packet_data, packet_opt_data):
         p_header = [0x55]  # Start byte
-        pass
         p_header.append(0x00)  # MSB data length
         p_header.append(len(packet_data))  # LSB data length
-        if len(arg) == 0:
-            p_header.append(0x00)  # optional data length
-        else:
-            p_header.append(arg[0])
+        p_header.append(len(packet_opt_data))  # optional data length
         p_header.append(packet_type)  # packet type
         p_header.append(self.calc_esp3header_crc(p_header))  # Header crc
         return p_header
 
-    def send_esp3packet(self, packet_type, packet_data):
-        p_esp3packet = self.calc_esp3header(packet_type, packet_data)
-        p_esp3packet += packet_data
-        p_esp3packet.append(self.calc_esp3data_crc(packet_data))
+    def send_esp3packet(self, packet_type, packet_data, packet_opt_data):
+        p_esp3packet = self.calc_esp3header(packet_type, packet_data, packet_opt_data)
+        data = packet_data + packet_opt_data
+        p_esp3packet += data
+        p_esp3packet.append(self.calc_esp3data_crc(data))
+        logging.debug(p_esp3packet)
+        logging.debug(' '.join(hex(i) for i in p_esp3packet))
+        logging.debug(' '.join("0x%0.2X" % i for i in p_esp3packet))
         for index in range(len(p_esp3packet)):
             p_esp3packet[index] = chr(p_esp3packet[index])
             self.ser.write(p_esp3packet[index].encode('utf-8'))
 
     def command_read_base_id(self):
-        self.send_esp3packet(0x05, [0x08])
+        self.send_esp3packet(0x05, [0x08], [])
+
+    def command_send_ute_response(self):
+        self.send_esp3packet(0x01, [0xd4, 0x91, 0x02, 0x46, 0x00, 0x12, 0x01, 0xd2, 0x00, 0x00, 0x00, 0x00, 0x00], [0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
+
+    def send_vld_on(self):
+        self.send_esp3packet(0x01, [0xd2, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00], [0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
+        logging.debug("ON")
+
+    def send_vld_off(self):
+        self.send_esp3packet(0x01, [0xd2, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], [0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
+        logging.debug("OFF")
 
     def parse_responde_code(self):
         if int(self.serial_data[0:1], 16) == 0x00:
@@ -184,6 +200,7 @@ class SerialReader(Thread):
         self.command_read_base_id()
         while True:
             self.serial_data = self.get_serial_data()
+            logging.info(self.serial_data)
             self.last_message = datetime.datetime.now()
             if self.check_packet_type('01'):
                 obj_enocean = EnOcean(self.serial_data)

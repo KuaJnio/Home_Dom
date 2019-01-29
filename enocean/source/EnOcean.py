@@ -1,26 +1,20 @@
 import json
 import time
-import logging
 
-
-def enocean_to_homedom(eo_id):
-    if eo_id == "01A4C431":
-        return "EO_TEMPHUM_1"
-    elif eo_id == "01A4702D":
-        return "EO_TEMPHUM_2"
-    elif eo_id == "050B3CBE":
-        return "EO_PRESENCE_1"
-    elif eo_id == "050B3D62":
-        return "EO_PRESENCE_2"
-    elif eo_id == "01805C9E":
-        return "EO_CONTACT_1"
-    elif eo_id == "050CB8B3":
-        return "EO_PRESENCE_3"
-    elif eo_id == "0029D193":
-        return "EO_SWITCH_WHITE"
-    else:
-        logging.warning(eo_id)
-        return eo_id
+enocean_to_homedom = {
+    "01A4C431": "EO_TEMPHUM_1",
+    "01A4702D": "EO_TEMPHUM_2",
+    "018176FF": "EO_TEMPHUM_3",
+    "050B3CBE": "EO_PRESENCE_1",
+    "050B3D62": "EO_PRESENCE_2",
+    "050CB8B3": "EO_PRESENCE_3",
+    "01805C9E": "EO_CONTACT_1",
+    "0029D193": "EO_REMOTE_WHITE",
+    "002B7AC5": "EO_REMOTE_PINK",
+    "0032DB63": "EO_REMOTE_GREY",
+    "002D2371": "EO_WALL_1",
+    "002D234C": "EO_WALL_2"
+}
 
 
 class EnOcean:
@@ -42,18 +36,22 @@ class EnOcean:
             return 'HD_CONTACT'
         elif self.get_rorg() == 'd2':
             return 'HD_ACTUATOR'
+        elif self.get_rorg() == 'd4':
+            return 'HD_UTE'
         else:
             return 'HD_UNKNOWN'
 
     def get_id(self):
         if self.get_rorg() == 'f6':
-            return 'HD_' + enocean_to_homedom(self.data[4:12].upper())
+            return 'HD_' + enocean_to_homedom.get(self.data[4:12].upper(), self.data[4:12].upper())
         elif self.get_rorg() == 'a5':
-            return 'HD_' + enocean_to_homedom(self.data[10:18].upper())
+            return 'HD_' + enocean_to_homedom.get(self.data[10:18].upper(), self.data[10:18].upper())
         elif self.get_rorg() == 'd5':
-            return 'HD_' + enocean_to_homedom(self.data[4:12].upper())
+            return 'HD_' + enocean_to_homedom.get(self.data[4:12].upper(), self.data[4:12].upper())
         elif self.get_rorg() == 'd2':
-            return 'HD_UNKNOWN'
+            return 'HD_' + enocean_to_homedom.get(self.data[8:16].upper(), self.data[8:16].upper())
+        elif self.get_rorg() == 'd4':
+            return 'HD_' + enocean_to_homedom.get(self.data[16:24].upper(), self.data[16:24].upper())
         else:
             return 'HD_UNKNOWN'
 
@@ -65,7 +63,9 @@ class EnOcean:
         elif self.get_rorg() == 'd5':
             return int(self.data[24:26], 16) * (-1)
         elif self.get_rorg() == 'd2':
-            return 'HD_UNKNOWN'
+            return int(self.data[28:30], 16) * (-1)
+        elif self.get_rorg() == 'd4':
+            return int(self.data[36:38], 16) * (-1)
         else:
             return 'HD_UNKNOWN'
 
@@ -77,7 +77,7 @@ class EnOcean:
         elif self.get_rorg() == 'd5':
             return self.data[2:4]
         elif self.get_rorg() == 'd2':
-            return 'HD_UNKNOWN'
+            return self.data[2:8]
         else:
             return 'HD_UNKNOWN'
 
@@ -136,6 +136,25 @@ class EnOcean:
         else:
             return '0'
 
+    def get_actuator_output(self):
+        channel = (int(self.get_data()[2:4], 16) & 1) + 1
+        if channel == 1:
+            if int(self.get_data()[4:6], 16) & 127:
+                #CHANNEL 1 ON
+                return '0'
+            else:
+                #CHANNEL 1 OFF
+                return '1'
+        elif channel == 2:
+            if int(self.get_data()[4:6], 16) & 127:
+                #CHANNEL 2 ON
+                return '2'
+            else:
+                #CHANNEL 2 OFF
+                return '3'
+        else:
+            return 'HD_UNKNOWN'
+
     def get_temp(self):
         if self.is_teach_in():
             return 'HD_UNKNOWN'
@@ -176,5 +195,9 @@ class EnOcean:
         elif self.get_type() == 'HD_CONTACT':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_contact() == 'HD_UNKNOWN' and not self.is_teach_in():
                 payload = self.set_payload(self.get_type(), self.get_id(), int(self.get_contact()))
+                payloads.append(payload)
+        elif self.get_type() == 'HD_ACTUATOR':
+            if not self.get_id() == 'HD_UNKNOWN' and not self.get_actuator_output() == 'HD_UNKNOWN':
+                payload = self.set_payload(self.get_type(), self.get_id(), int(self.get_actuator_output()))
                 payloads.append(payload)
         return payloads

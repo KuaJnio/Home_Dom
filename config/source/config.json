@@ -7,7 +7,7 @@
     "lifx_1_ip":            "192.168.1.12",
     "lifx_1_mac":           "d0:73:d5:21:89:a6",
     "actionmanager_topics": ["inputs", "events"],
-    "enocean_topics":       [],
+    "enocean_topics":       ["inputs"],
     "hometts_topics":       ["outputs"],
     "lifx_topics":          ["outputs"],
     "recorder_topics":      ["inputs"],
