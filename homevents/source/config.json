@@ -1,0 +1,166 @@
+{
+  "regexs": {
+    "SWITCH_BLANC_0": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_SWITCH_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?0).*$"
+    },
+    "SWITCH_BLANC_1": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_SWITCH_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?1).*$"
+    },
+    "SWITCH_BLANC_2": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_SWITCH_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?2).*$"
+    },
+    "SWITCH_BLANC_3": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_SWITCH_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?3).*$"
+    },
+    "SWITCH_BLANC_4": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_SWITCH_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?4).*$"
+    },
+    "BUTTON_WA_CHAMBRE_ON": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_CHAMBRE)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?1).*$"
+    },
+    "BUTTON_WA_CHAMBRE_OFF": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_CHAMBRE)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?0).*$"
+    },
+    "BUTTON_WA_CUISINE_ON": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_CUISINE)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?1).*$"
+    },
+    "BUTTON_WA_CUISINE_OFF": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_CUISINE)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?0).*$"
+    },
+    "BUTTON_WA_SALON_ON": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_SALON)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?1).*$"
+    },
+    "BUTTON_WA_SALON_OFF": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_SALON)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?0).*$"
+    },
+    "BUTTON_WA_BUREAU_ON": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_BUREAU)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?1).*$"
+    },
+    "BUTTON_WA_BUREAU_OFF": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_BUREAU)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?0).*$"
+    },
+    "BUTTON_WA_SALLEDEBAIN_ON": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_SALLEDEBAIN)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?1).*$"
+    },
+    "BUTTON_WA_SALLEDEBAIN_OFF": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_SALLEDEBAIN)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?0).*$"
+    },
+    "BUTTON_WA_COULOIR_ON": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_COULOIR)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?1).*$"
+    },
+    "BUTTON_WA_COULOIR_OFF": {
+      "enabled": true,
+      "value": "^(?=.*HD_WA_COULOIR)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?0).*$"
+    },
+    "PRESENCE_CHAMBRE_ON": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_PRESENCE_3)(?=.*HD_PRESENCE)(?=.*\"HD_VALUE\":[ ]?1).*$"
+    },
+    "PRESENCE_CHAMBRE_OFF": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_PRESENCE_3)(?=.*HD_PRESENCE)(?=.*\"HD_VALUE\":[ ]?0).*$"
+    },
+    "PRESENCE_SALON_ON": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_PRESENCE_2)(?=.*HD_PRESENCE)(?=.*\"HD_VALUE\":[ ]?1).*$"
+    },
+    "PRESENCE_SALON_OFF": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_PRESENCE_2)(?=.*HD_PRESENCE)(?=.*\"HD_VALUE\":[ ]?0).*$"
+    }
+  },
+  "rules": {
+    "LAMPE_CUISINE_ON": {
+      "enabled": true,
+      "hold": 0,
+      "mode": "one",
+      "name": "LAMPE_CUISINE_ON",
+      "output_topic": "events",
+      "regexs_no": {},
+      "regexs_yes": {
+        "1": "SWITCH_BLANC_1",
+        "2": "BUTTON_WEBAPP_CUISINE_ON",
+        "3": "PRESENCE_SALON_ON"
+      },
+      "window": 3
+    },
+    "LAMPE_CUISINE_OFF": {
+      "enabled": true,
+      "hold": 0,
+      "mode": "one",
+      "name": "LAMPE_CUISINE_OFF",
+      "output_topic": "events",
+      "regexs_no": {},
+      "regexs_yes": {
+        "1": "SWITCH_BLANC_2",
+        "2": "BUTTON_WEBAPP_CUISINE_OFF",
+        "3": "PRESENCE_SALON_OFF"
+      },
+      "window": 3
+    },
+    "PRESENCE_SALON_ENABLE": {
+      "enabled": false,
+      "hold": 0,
+      "mode": "one",
+      "name": "PRESENCE_SALON_ENABLE",
+      "output_topic": "events",
+      "regexs_no": {},
+      "regexs_yes": {
+        "1": "SWITCH_BLANC_3"
+      },
+      "window": 3
+    },
+    "PRESENCE_SALON_DISABLE": {
+      "enabled": false,
+      "hold": 0,
+      "mode": "one",
+      "name": "PRESENCE_SALON_DISABLE",
+      "output_topic": "events",
+      "regexs_no": {},
+      "regexs_yes": {
+        "1": "SWITCH_BLANC_4"
+      },
+      "window": 3
+    },
+    "REQUEST_WEATHER_CURRENT": {
+      "enabled": true,
+      "hold": 0,
+      "mode": "one",
+      "name": "REQUEST_WEATHER_CURRENT",
+      "output_topic": "events",
+      "regexs_no": {},
+      "regexs_yes": {
+        "1": "SWITCH_BLANC_3"
+      },
+      "window": 3
+    },
+    "REQUEST_WEATHER_FORECAST": {
+      "enabled": true,
+      "hold": 0,
+      "mode": "one",
+      "name": "REQUEST_WEATHER_FORECAST",
+      "output_topic": "events",
+      "regexs_no": {},
+      "regexs_yes": {
+        "1": "SWITCH_BLANC_4"
+      },
+      "window": 3
+    }
+  }
+}

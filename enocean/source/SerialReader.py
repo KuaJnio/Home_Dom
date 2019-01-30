@@ -6,9 +6,6 @@ import datetime
 import codecs
 import logging
 
-
-start = 0
-
 u8crc8table = [
     0x00, 0x07, 0x0e, 0x09, 0x1c, 0x1b, 0x12, 0x15,
     0x38, 0x3f, 0x36, 0x31, 0x24, 0x23, 0x2a, 0x2d,
@@ -52,8 +49,8 @@ class SerialReader(Thread):
         self.mqtt_client = mqtt_client
         try:
             self.ser = serial.Serial(self.device, 57600, timeout=0)
-        except serial.SerialException:
-            logging.debug('Could not connect to serial device' + device)
+        except serial.SerialException as e:
+            logging.debug('Could not connect to serial device {}: {}'.format(device, str(e)))
         self.app_version = ''
         self.api_version = ''
         self.chip_id = ''
@@ -116,8 +113,6 @@ class SerialReader(Thread):
                 s = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')
             while self.ser.inWaiting() < 5:
                 time.sleep(0.05)
-        global start
-        start = time.time()
         self.data_length = str(codecs.encode(self.ser.read(2), 'hex'), 'utf-8')  # read length field
         self.op_data_length = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')  # read op length field
         self.packet_type = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')  # read packet type field
@@ -161,12 +156,16 @@ class SerialReader(Thread):
         data = packet_data + packet_opt_data
         p_esp3packet += data
         p_esp3packet.append(self.calc_esp3data_crc(data))
-        logging.debug(p_esp3packet)
-        logging.debug(' '.join(hex(i) for i in p_esp3packet))
         logging.debug(' '.join("0x%0.2X" % i for i in p_esp3packet))
         for index in range(len(p_esp3packet)):
             p_esp3packet[index] = chr(p_esp3packet[index])
             self.ser.write(p_esp3packet[index].encode('utf-8'))
+
+    def send_raw_packet(self, packet):
+        logging.debug(' '.join("0x%0.2X" % i for i in packet))
+        for index in range(len(packet)):
+            packet[index] = chr(packet[index])
+            self.ser.write(packet[index].encode('utf-8'))
 
     def command_read_base_id(self):
         self.send_esp3packet(0x05, [0x08], [])
@@ -175,11 +174,15 @@ class SerialReader(Thread):
         self.send_esp3packet(0x01, [0xd4, 0x91, 0x02, 0x46, 0x00, 0x12, 0x01, 0xd2, 0x00, 0x00, 0x00, 0x00, 0x00], [0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
 
     def send_vld_on(self):
-        self.send_esp3packet(0x01, [0xd2, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00], [0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
+        #self.send_esp3packet(0x01, [0xd2, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00], [0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
+        #self.send_raw_packet([0x55, 0x00, 0x09, 0x07, 0x01, 0x56, 0xD2, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x01, 0x94, 0xA6, 0xA8, 0xFF, 0x00, 0xA2])
+        self.send_raw_packet([0x55, 0x00, 0x09, 0x07, 0x01, 0x56, 0xD2, 0x01, 0x00, 0x01, 0xff, 0xd4, 0xa8, 0x00, 0x00, 0x03, 0x01, 0x94, 0xA6, 0xA8, 0xFF, 0x00, 0xA2])
+
         logging.debug("ON")
 
     def send_vld_off(self):
-        self.send_esp3packet(0x01, [0xd2, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], [0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
+        #self.send_esp3packet(0x01, [0xd2, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], [0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
+        self.send_raw_packet([0x55, 0x00, 0x09, 0x07, 0x01, 0x56, 0xD2, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x01, 0x94, 0xA6, 0xA8, 0xFF, 0x00, 0x36])
         logging.debug("OFF")
 
     def parse_responde_code(self):
@@ -208,6 +211,7 @@ class SerialReader(Thread):
                 for payload in payloads:
                     self.mqtt_client.publish("inputs", payload)
             elif self.check_packet_type('02'):
+                logging.debug("Got a response")
                 self.parse_responde_code()
 
 

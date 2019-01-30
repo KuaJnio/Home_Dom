@@ -36,9 +36,9 @@ def event_manager(topic, payload):
     try:
         json_payload = json.loads(payload)
         if topic == "inputs":
-            if (json_payload["HD_VALUE"] == 2) and (json_payload["HD_IDENTIFIER"] == "HD_EO_REMOTE_PINK"):
+            if (json_payload["HD_VALUE"] == 0) and (json_payload["HD_IDENTIFIER"] == "HD_WA_BUREAU"):
                 serial_thread.send_vld_off()
-            elif (json_payload["HD_VALUE"] == 1) and (json_payload["HD_IDENTIFIER"] == "HD_EO_REMOTE_PINK"):
+            elif (json_payload["HD_VALUE"] == 1) and (json_payload["HD_IDENTIFIER"] == "HD_WA_BUREAU"):
                 serial_thread.send_vld_on()
 
     except Exception as e:

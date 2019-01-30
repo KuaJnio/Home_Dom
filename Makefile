@@ -96,7 +96,7 @@ build-enocean:
 run-enocean:
 	$(TARGET) rm -f enocean ||:
 	$(TARGET) pull registry:5000/enocean
-	$(TARGET) run --init -d --restart always --name enocean --device /dev/ttyUSB0:/dev/ttyENOCEAN -v /mnt/disk/logs:/var/log/homedom registry:5000/enocean
+	$(TARGET) run --init -d --restart always --name enocean --device /dev/ttyAMA0:/dev/ttyENOCEAN -v /mnt/disk/logs:/var/log/homedom registry:5000/enocean
 
 enocean:
 	make build-enocean
