@@ -1,4 +1,6 @@
-discordinho/source/token.json
+discordinho/source/token
 */*/homedom_logger.py
 */*/MQTTClient.py
 */*/get_config.py
+.idea
+venv

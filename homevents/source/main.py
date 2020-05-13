@@ -23,7 +23,7 @@ database_handler = None
 
 MQTT_HOST = get_parameter("mqtt_host")
 MQTT_PORT = get_parameter("mqtt_port")
-MQTT_TOPICS = ["#"]
+MQTT_TOPICS = ["inputs", "outputs", "events"]
 
 
 @app.route('/config', methods=['GET'])

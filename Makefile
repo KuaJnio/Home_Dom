@@ -1,10 +1,11 @@
 .PHONY: actionmanager base common config discordinho enocean hometts homevents lifx mqtt recorder weather webapp
-BUILD="docker build --pull -t registry:5000/"
-PUSH="docker push registry:5000/"
-PULL="pull registry:5000/"
-HOST="192.168.1.16"
+REGISTRY=registry.romain-dupont.fr
+BUILD="docker build --pull -t $(REGISTRY)/"
+PUSH="docker push $(REGISTRY)/"
+PULL="pull $(REGISTRY)/"
+HOST="0.0.0.0"
 TARGET=docker -H $(HOST):2375
-
+LOGDIR=/data/home_dom/logs
 default:
 
 deploy-common:
@@ -56,8 +57,8 @@ build-mqtt:
 
 run-mqtt:
 	$(TARGET) rm -f mqtt ||:
-	$(TARGET) pull registry:5000/mqtt
-	$(TARGET) run --init -d --restart always --name mqtt -p 1883:1883 -p 1884:1884 registry:5000/mqtt
+	$(TARGET) pull $(REGISTRY)/mqtt
+	$(TARGET) run --init -d --restart always --name mqtt -p 1883:1883 -p 1884:1884 $(REGISTRY)/mqtt
 
 mqtt:
 	make build-mqtt
@@ -69,8 +70,8 @@ build-config:
 
 run-config:
 	$(TARGET) rm -f config ||:
-	$(TARGET) pull registry:5000/config
-	$(TARGET) run --init -d --restart always --name config -p 8090:80 -v /mnt/disk/logs:/var/log/homedom registry:5000/config
+	$(TARGET) pull $(REGISTRY)/config
+	$(TARGET) run --init -d --restart always --name config -p 8090:80 -v $(LOGDIR):/var/log/homedom $(REGISTRY)/config
 
 config:
 	make build-config
@@ -82,8 +83,8 @@ build-actionmanager:
 
 run-actionmanager:
 	$(TARGET) rm -f actionmanager ||:
-	$(TARGET) pull registry:5000/actionmanager
-	$(TARGET) run --init -d --restart always --name actionmanager -v /mnt/disk/logs:/var/log/homedom registry:5000/actionmanager
+	$(TARGET) pull $(REGISTRY)/actionmanager
+	$(TARGET) run --init -d --restart always --name actionmanager -v $(LOGDIR):/var/log/homedom $(REGISTRY)/actionmanager
 
 actionmanager:
 	make build-actionmanager
@@ -95,8 +96,8 @@ build-enocean:
 
 run-enocean:
 	$(TARGET) rm -f enocean ||:
-	$(TARGET) pull registry:5000/enocean
-	$(TARGET) run --init -d --restart always --name enocean --device /dev/ttyAMA0:/dev/ttyENOCEAN -v /mnt/disk/logs:/var/log/homedom registry:5000/enocean
+	$(TARGET) pull $(REGISTRY)/enocean
+	$(TARGET) run --init -d --restart always --name enocean --device /dev/ttyUSB0:/dev/ttyENOCEAN -v $(LOGDIR):/var/log/homedom $(REGISTRY)/enocean
 
 enocean:
 	make build-enocean
@@ -108,8 +109,8 @@ build-hometts:
 
 run-hometts:
 	$(TARGET) rm -f hometts ||:
-	$(TARGET) pull registry:5000/hometts
-	$(TARGET) run --init -d --restart always --name hometts --device /dev/snd -v /mnt/disk/logs:/var/log/homedom registry:5000/hometts
+	$(TARGET) pull $(REGISTRY)/hometts
+	$(TARGET) run --init -d --restart always --name hometts --device /dev/snd -v $(LOGDIR):/var/log/homedom $(REGISTRY)/hometts
 
 hometts:
 	make build-hometts
@@ -121,8 +122,8 @@ build-homevents:
 
 run-homevents:
 	$(TARGET) rm -f homevents ||:
-	$(TARGET) pull registry:5000/homevents
-	$(TARGET) run --init -d --restart always --name homevents -p 8080:80 -v /mnt/disk/logs:/var/log/homedom registry:5000/homevents
+	$(TARGET) pull $(REGISTRY)/homevents
+	$(TARGET) run --init -d --restart always --name homevents -p 8080:80 -v $(LOGDIR):/var/log/homedom --memory="1g" --memory-swap="2g" $(REGISTRY)/homevents
 
 homevents:
 	make build-homevents
@@ -134,8 +135,8 @@ build-lifx:
 
 run-lifx:
 	$(TARGET) rm -f lifx ||:
-	$(TARGET) pull registry:5000/lifx
-	$(TARGET) run --init -d --restart always --name lifx --net host -v /mnt/disk/logs:/var/log/homedom registry:5000/lifx
+	$(TARGET) pull $(REGISTRY)/lifx
+	$(TARGET) run --init -d --restart always --name lifx --net host -v $(LOGDIR):/var/log/homedom $(REGISTRY)/lifx
 
 lifx:
 	make build-lifx
@@ -147,8 +148,8 @@ build-recorder:
 
 run-recorder:
 	$(TARGET) rm -f recorder ||:
-	$(TARGET) pull registry:5000/recorder
-	$(TARGET) run --init -d --restart always --name recorder -v /mnt/disk/recorder-data:/home -p 8000:80 -v /mnt/disk/logs:/var/log/homedom registry:5000/recorder
+	$(TARGET) pull $(REGISTRY)/recorder
+	$(TARGET) run --init -d --restart always --name recorder -v /mnt/disk/recorder-data:/home -p 8000:80 -v $(LOGDIR):/var/log/homedom $(REGISTRY)/recorder
 
 recorder:
 	make build-recorder
@@ -160,8 +161,8 @@ build-webapp:
 
 run-webapp:
 	$(TARGET) rm -f webapp ||:
-	$(TARGET) pull registry:5000/webapp
-	$(TARGET) run --init -d --restart always --name webapp -p 80:80 -v /mnt/disk/logs:/var/log/homedom registry:5000/webapp
+	$(TARGET) pull $(REGISTRY)/webapp
+	$(TARGET) run --init -d --restart always --name webapp -p 80:80 -v $(LOGDIR):/var/log/homedom $(REGISTRY)/webapp
 
 webapp:
 	make build-webapp
@@ -173,8 +174,8 @@ build-weather:
 
 run-weather:
 	$(TARGET) rm -f weather ||:
-	$(TARGET) pull registry:5000/weather
-	$(TARGET) run --init -d --restart always --name weather -v /mnt/disk/logs:/var/log/homedom registry:5000/weather
+	$(TARGET) pull $(REGISTRY)/weather
+	$(TARGET) run --init -d --restart always --name weather -v $(LOGDIR):/var/log/homedom $(REGISTRY)/weather
 
 weather:
 	make build-weather
@@ -186,8 +187,8 @@ build-discordinho:
 
 run-discordinho:
 	$(TARGET) rm -f discordinho ||:
-	$(TARGET) pull registry:5000/discordinho
-	$(TARGET) run --init -d --restart always --name discordinho -v /mnt/disk/logs:/var/log/homedom registry:5000/discordinho
+	$(TARGET) pull $(REGISTRY)/discordinho
+	$(TARGET) run --init -d --restart always --name discordinho -v $(LOGDIR):/var/log/homedom $(REGISTRY)/discordinho
 
 discordinho:
 	make build-discordinho
@@ -220,7 +221,7 @@ run:
 	make run-recorder
 	make run-webapp
 	make run-weather
-	make run-discordinho
+	#make run-discordinho
 
 all:
 	make clean-target

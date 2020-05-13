@@ -96,8 +96,8 @@ def create_healthcheck(app_name):
 
 if __name__ == '__main__':
     try:
-        with open('token.json') as t:
-            token = json.load(t)[0]
+        with open('token') as t:
+            token = json.load(t)
         mqtt_client = create_mqtt_client(MQTT_HOST, MQTT_PORT, on_message, MQTT_TOPICS)
         create_healthcheck("discordinho")
         client.run(token)

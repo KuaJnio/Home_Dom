@@ -1,4 +1,4 @@
-FROM registry:5000/base
+FROM registry.romain-dupont.fr/base
 
 RUN cd /home && wget http://repo.mosquitto.org/debian/mosquitto-repo.gpg.key
 RUN apt-key add /home/mosquitto-repo.gpg.key

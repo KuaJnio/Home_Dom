@@ -2,23 +2,23 @@
   "regexs": {
     "SWITCH_BLANC_0": {
       "enabled": true,
-      "value": "^(?=.*HD_EO_SWITCH_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?0).*$"
+      "value": "^(?=.*HD_EO_REMOTE_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?0).*$"
     },
     "SWITCH_BLANC_1": {
       "enabled": true,
-      "value": "^(?=.*HD_EO_SWITCH_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?1).*$"
+      "value": "^(?=.*HD_EO_REMOTE_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?1).*$"
     },
     "SWITCH_BLANC_2": {
       "enabled": true,
-      "value": "^(?=.*HD_EO_SWITCH_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?2).*$"
+      "value": "^(?=.*HD_EO_REMOTE_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?2).*$"
     },
     "SWITCH_BLANC_3": {
       "enabled": true,
-      "value": "^(?=.*HD_EO_SWITCH_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?3).*$"
+      "value": "^(?=.*HD_EO_REMOTE_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?3).*$"
     },
     "SWITCH_BLANC_4": {
       "enabled": true,
-      "value": "^(?=.*HD_EO_SWITCH_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?4).*$"
+      "value": "^(?=.*HD_EO_REMOTE_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?4).*$"
     },
     "BUTTON_WA_CHAMBRE_ON": {
       "enabled": true,

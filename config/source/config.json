@@ -1,8 +1,8 @@
 {
-    "homedom":              "192.168.1.16",
-    "mqtt_host":            "192.168.1.16",
+    "homedom":              "192.168.1.14",
+    "mqtt_host":            "192.168.1.14",
     "mqtt_port":            1883,
-    "homevents_ip":         "192.168.1.16",
+    "homevents_ip":         "192.168.1.14",
     "homevents_port":       8080,
     "lifx_1_ip":            "192.168.1.12",
     "lifx_1_mac":           "d0:73:d5:21:89:a6",
