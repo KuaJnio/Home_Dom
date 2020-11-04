@@ -6,7 +6,9 @@ PULL="pull $(REGISTRY)/"
 HOST="0.0.0.0"
 TARGET=docker -H $(HOST):2375
 LOGDIR=/data/home_dom/logs
+
 default:
+	make all
 
 deploy-common:
 	cp common/MQTTClient.py actionmanager/source

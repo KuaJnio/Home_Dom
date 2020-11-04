@@ -7,7 +7,7 @@ def get_parameter(key):
     while True:
         try:
             logging.info("Getting parameter {}...".format(key))
-            r = requests.get("http://192.168.1.14:8090/", timeout=1)
+            r = requests.get("http://192.168.1.36:8090/", timeout=1)
             res = r.json().get(key, None)
             if res:
                 return res
