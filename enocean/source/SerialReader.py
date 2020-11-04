@@ -50,7 +50,8 @@ class SerialReader(Thread):
         try:
             self.ser = serial.Serial(self.device, 57600, timeout=0)
         except serial.SerialException as e:
-            logging.debug('Could not connect to serial device {}: {}'.format(device, str(e)))
+            logging.debug(
+                'Could not connect to serial device {}: {}'.format(device, str(e)))
         self.app_version = ''
         self.api_version = ''
         self.chip_id = ''
@@ -79,9 +80,12 @@ class SerialReader(Thread):
 
     def check_header_crc(self):
         u8crc_header = 0
-        u8crc_header = (self.proccrc8(u8crc_header, int(self.data_length, 16) >> 8))
-        u8crc_header = (self.proccrc8(u8crc_header, int(self.data_length, 16) & 0xff))
-        u8crc_header = (self.proccrc8(u8crc_header, int(self.op_data_length, 16)))
+        u8crc_header = (self.proccrc8(
+            u8crc_header, int(self.data_length, 16) >> 8))
+        u8crc_header = (self.proccrc8(
+            u8crc_header, int(self.data_length, 16) & 0xff))
+        u8crc_header = (self.proccrc8(
+            u8crc_header, int(self.op_data_length, 16)))
         u8crc_header = (self.proccrc8(u8crc_header, int(self.packet_type, 16)))
         if u8crc_header == int(self.header_crc, 16):
             return True
@@ -92,7 +96,8 @@ class SerialReader(Thread):
         u8crc_data = 0
         i = 0
         while i < len(serial_data) - 2:
-            u8crc_data = self.proccrc8(u8crc_data, (int(serial_data[i] + serial_data[i + 1], 16) & 0xff))
+            u8crc_data = self.proccrc8(
+                u8crc_data, (int(serial_data[i] + serial_data[i + 1], 16) & 0xff))
             i += 2
         if u8crc_data == int(serial_data[len(serial_data) - 2] + serial_data[len(serial_data) - 1], 16):
             return True
@@ -113,16 +118,22 @@ class SerialReader(Thread):
                 s = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')
             while self.ser.inWaiting() < 5:
                 time.sleep(0.05)
-        self.data_length = str(codecs.encode(self.ser.read(2), 'hex'), 'utf-8')  # read length field
-        self.op_data_length = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')  # read op length field
-        self.packet_type = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')  # read packet type field
-        self.header_crc = str(codecs.encode(self.ser.read(1), 'hex'), 'utf-8')  # read header crc field
+        self.data_length = str(codecs.encode(
+            self.ser.read(2), 'hex'), 'utf-8')  # read length field
+        self.op_data_length = str(codecs.encode(
+            self.ser.read(1), 'hex'), 'utf-8')  # read op length field
+        self.packet_type = str(codecs.encode(self.ser.read(
+            1), 'hex'), 'utf-8')  # read packet type field
+        self.header_crc = str(codecs.encode(self.ser.read(
+            1), 'hex'), 'utf-8')  # read header crc field
 
         if self.check_header_crc():
-            self.total_data_length = (int(self.data_length, 16) + int(self.op_data_length, 16))
+            self.total_data_length = (
+                int(self.data_length, 16) + int(self.op_data_length, 16))
             while self.ser.inWaiting() < self.total_data_length:
                 time.sleep(0.05)
-            serial_data = str(codecs.encode(self.ser.read(self.total_data_length + 1), 'hex'), 'utf-8')
+            serial_data = str(codecs.encode(self.ser.read(
+                self.total_data_length + 1), 'hex'), 'utf-8')
             if self.check_data_crc(serial_data):
                 return serial_data
             return "Data CRC Failed"
@@ -152,7 +163,8 @@ class SerialReader(Thread):
         return p_header
 
     def send_esp3packet(self, packet_type, packet_data, packet_opt_data):
-        p_esp3packet = self.calc_esp3header(packet_type, packet_data, packet_opt_data)
+        p_esp3packet = self.calc_esp3header(
+            packet_type, packet_data, packet_opt_data)
         data = packet_data + packet_opt_data
         p_esp3packet += data
         p_esp3packet.append(self.calc_esp3data_crc(data))
@@ -171,16 +183,19 @@ class SerialReader(Thread):
         self.send_esp3packet(0x05, [0x08], [])
 
     def command_send_ute_response(self):
-        self.send_esp3packet(0x01, [0xd4, 0x91, 0x02, 0x46, 0x00, 0x12, 0x01, 0xd2, 0x00, 0x00, 0x00, 0x00, 0x00], [0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
+        self.send_esp3packet(0x01, [0xd4, 0x91, 0x02, 0x46, 0x00, 0x12, 0x01, 0xd2, 0x00, 0x00, 0x00, 0x00, 0x00], [
+                             0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
 
     def send_vld_on(self):
         #self.send_esp3packet(0x01, [0xd2, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00], [0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
         #self.send_raw_packet([0x55, 0x00, 0x09, 0x07, 0x01, 0x56, 0xD2, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x01, 0x94, 0xA6, 0xA8, 0xFF, 0x00, 0xA2])
-        self.send_raw_packet([0x55, 0x00, 0x09, 0x07, 0x01, 0x56, 0xD2, 0x01, 0x00, 0x01, 0xff, 0xd4, 0xa8, 0x00, 0x00, 0x03, 0x01, 0x94, 0xA6, 0xA8, 0xFF, 0x00, 0xA2])
+        self.send_raw_packet([0x55, 0x00, 0x09, 0x07, 0x01, 0x56, 0xD2, 0x01, 0x00, 0x01,
+                              0xff, 0xd4, 0xa8, 0x00, 0x00, 0x03, 0x01, 0x94, 0xA6, 0xA8, 0xFF, 0x00, 0xA2])
 
     def send_vld_off(self):
         #self.send_esp3packet(0x01, [0xd2, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], [0x03, 0x01, 0x94, 0xa6, 0xa8, 0xff, 0x00])
-        self.send_raw_packet([0x55, 0x00, 0x09, 0x07, 0x01, 0x56, 0xD2, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x01, 0x94, 0xA6, 0xA8, 0xFF, 0x00, 0x36])
+        self.send_raw_packet([0x55, 0x00, 0x09, 0x07, 0x01, 0x56, 0xD2, 0x01, 0x00, 0x00,
+                              0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x01, 0x94, 0xA6, 0xA8, 0xFF, 0x00, 0x36])
 
     def parse_responde_code(self):
         if int(self.serial_data[0:1], 16) == 0x00:
