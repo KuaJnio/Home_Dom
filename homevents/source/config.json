@@ -20,6 +20,46 @@
       "enabled": true,
       "value": "^(?=.*HD_EO_REMOTE_WHITE)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?4).*$"
     },
+    "SWITCH_WALL1_0": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_WALL_1)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?0).*$"
+    },
+    "SWITCH_WALL1_1": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_WALL_1)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?1).*$"
+    },
+    "SWITCH_WALL1_2": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_WALL_1)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?2).*$"
+    },
+    "SWITCH_WALL1_3": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_WALL_1)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?3).*$"
+    },
+    "SWITCH_WALL1_4": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_WALL_1)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?4).*$"
+    },
+    "SWITCH_WALL2_0": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_WALL_2)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?0).*$"
+    },
+    "SWITCH_WALL2_1": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_WALL_2)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?1).*$"
+    },
+    "SWITCH_WALL2_2": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_WALL_2)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?2).*$"
+    },
+    "SWITCH_WALL2_3": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_WALL_2)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?3).*$"
+    },
+    "SWITCH_WALL2_4": {
+      "enabled": true,
+      "value": "^(?=.*HD_EO_WALL_2)(?=.*HD_SWITCH)(?=.*\"HD_VALUE\":[ ]?4).*$"
+    },
     "BUTTON_WA_CHAMBRE_ON": {
       "enabled": true,
       "value": "^(?=.*HD_WA_CHAMBRE)(?=.*HD_BUTTON)(?=.*\"HD_VALUE\":[ ]?1).*$"
@@ -86,31 +126,33 @@
     }
   },
   "rules": {
-    "LAMPE_CUISINE_ON": {
+    "LAMPE_SALON_ON": {
       "enabled": true,
       "hold": 0,
       "mode": "one",
-      "name": "LAMPE_CUISINE_ON",
+      "name": "LAMPE_SALON_ON",
       "output_topic": "events",
       "regexs_no": {},
       "regexs_yes": {
         "1": "SWITCH_BLANC_1",
-        "2": "BUTTON_WEBAPP_CUISINE_ON",
-        "3": "PRESENCE_SALON_ON"
+        "2": "BUTTON_WA_SALON_ON",
+        "3": "SWITCH_WALL2_2",
+        "4": "SWITCH_WALL2_4"
       },
       "window": 3
     },
-    "LAMPE_CUISINE_OFF": {
+    "LAMPE_SALON_OFF": {
       "enabled": true,
       "hold": 0,
       "mode": "one",
-      "name": "LAMPE_CUISINE_OFF",
+      "name": "LAMPE_SALON_OFF",
       "output_topic": "events",
       "regexs_no": {},
       "regexs_yes": {
         "1": "SWITCH_BLANC_2",
-        "2": "BUTTON_WEBAPP_CUISINE_OFF",
-        "3": "PRESENCE_SALON_OFF"
+        "2": "BUTTON_WA_SALON_OFF",
+        "3": "SWITCH_WALL2_1",
+        "4": "SWITCH_WALL2_3"
       },
       "window": 3
     },

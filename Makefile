@@ -3,7 +3,7 @@ REGISTRY=registry.romain-dupont.fr
 BUILD="docker build --pull -t $(REGISTRY)/"
 PUSH="docker push $(REGISTRY)/"
 PULL="pull $(REGISTRY)/"
-HOST="0.0.0.0"
+HOST="192.168.1.37"
 TARGET=docker -H $(HOST):2375
 LOGDIR=/data/home_dom/logs
 
@@ -45,6 +45,7 @@ deploy-common:
 
 clean-target:
 	$(TARGET) rm -f mqtt config actionmanager enocean homevents hometts lifx recorder webapp weather discordinho ||:
+	docker image prune -f
 
 build-base:
 	"$(BUILD)base" base
@@ -104,6 +105,15 @@ run-enocean:
 enocean:
 	make build-enocean
 	make run-enocean
+
+enocean-debug:
+	make clean-target
+	make deploy-common
+	make build-base
+	make mqtt
+	make config
+	sleep 3
+	make enocean
 
 build-hometts:
 	"$(BUILD)hometts" hometts
@@ -224,6 +234,9 @@ run:
 	make run-webapp
 	make run-weather
 	#make run-discordinho
+
+logs:
+	tail -f $(LOGDIR)/* ||:
 
 all:
 	make clean-target

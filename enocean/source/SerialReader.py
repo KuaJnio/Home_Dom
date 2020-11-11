@@ -215,7 +215,7 @@ class SerialReader(Thread):
         self.command_read_base_id()
         while True:
             self.serial_data = self.get_serial_data()
-            logging.info(self.serial_data)
+            logging.info("Raw data: " + self.serial_data)
             self.last_message = datetime.datetime.now()
             if self.check_packet_type('01'):
                 obj_enocean = EnOcean(self.serial_data)

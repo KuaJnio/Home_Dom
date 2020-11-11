@@ -89,9 +89,9 @@ def event_manager(topic, payload):
         elif topic == "events":
             json_payload = json.loads(payload)
             name = json_payload['name']
-            if name == "LAMPE_CUISINE_ON":
+            if name == "LAMPE_SALON_ON":
                 send_lifx_command("on", GOLD)
-            elif name == "LAMPE_CUISINE_OFF":
+            elif name == "LAMPE_SALON_OFF":
                 send_lifx_command("off", GOLD)
             elif name == "REQUEST_WEATHER_CURRENT":
                 send_weather_request("current")

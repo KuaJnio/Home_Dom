@@ -1,5 +1,6 @@
 import json
 import time
+import logging
 
 enocean_to_homedom = {
     "01A4C431": "EO_TEMPHUM_1",
@@ -43,17 +44,28 @@ class EnOcean:
 
     def get_id(self):
         if self.get_rorg() == 'f6':
-            return 'HD_' + enocean_to_homedom.get(self.data[4:12].upper(), self.data[4:12].upper())
+            identifier = 'HD_' + \
+                enocean_to_homedom.get(
+                    self.data[4:12].upper(), self.data[4:12].upper())
         elif self.get_rorg() == 'a5':
-            return 'HD_' + enocean_to_homedom.get(self.data[10:18].upper(), self.data[10:18].upper())
+            identifier = 'HD_' + \
+                enocean_to_homedom.get(
+                    self.data[10:18].upper(), self.data[10:18].upper())
         elif self.get_rorg() == 'd5':
-            return 'HD_' + enocean_to_homedom.get(self.data[4:12].upper(), self.data[4:12].upper())
+            identifier = 'HD_' + \
+                enocean_to_homedom.get(
+                    self.data[4:12].upper(), self.data[4:12].upper())
         elif self.get_rorg() == 'd2':
-            return 'HD_' + enocean_to_homedom.get(self.data[8:16].upper(), self.data[8:16].upper())
+            identifier = 'HD_' + \
+                enocean_to_homedom.get(
+                    self.data[8:16].upper(), self.data[8:16].upper())
         elif self.get_rorg() == 'd4':
-            return 'HD_' + enocean_to_homedom.get(self.data[16:24].upper(), self.data[16:24].upper())
+            identifier = 'HD_' + \
+                enocean_to_homedom.get(
+                    self.data[16:24].upper(), self.data[16:24].upper())
         else:
-            return 'HD_UNKNOWN'
+            identifier = 'HD_UNKNOWN'
+        return identifier
 
     def get_rssi(self):
         if self.get_rorg() == 'f6':
@@ -140,17 +152,17 @@ class EnOcean:
         channel = (int(self.get_data()[2:4], 16) & 1) + 1
         if channel == 1:
             if int(self.get_data()[4:6], 16) & 127:
-                #CHANNEL 1 ON
+                # CHANNEL 1 ON
                 return '0'
             else:
-                #CHANNEL 1 OFF
+                # CHANNEL 1 OFF
                 return '1'
         elif channel == 2:
             if int(self.get_data()[4:6], 16) & 127:
-                #CHANNEL 2 ON
+                # CHANNEL 2 ON
                 return '2'
             else:
-                #CHANNEL 2 OFF
+                # CHANNEL 2 OFF
                 return '3'
         else:
             return 'HD_UNKNOWN'
@@ -179,25 +191,32 @@ class EnOcean:
         payloads = []
         if self.get_type() == 'HD_SWITCH':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_button() == 'HD_UNKNOWN' and not self.is_teach_in():
-                payload = self.set_payload(self.get_type(), self.get_id(), int(self.get_button()))
+                payload = self.set_payload(
+                    self.get_type(), self.get_id(), int(self.get_button()))
                 payloads.append(payload)
         elif self.get_type() == 'HD_PRESENCE':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_occupancy() == 'HD_UNKNOWN' and not self.is_teach_in():
-                payload = self.set_payload(self.get_type(), self.get_id(), int(self.get_occupancy()))
+                payload = self.set_payload(
+                    self.get_type(), self.get_id(), int(self.get_occupancy()))
                 payloads.append(payload)
         elif self.get_type() == 'HD_TEMPHUM':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_temp() == 'HD_UNKNOWN' and not self.is_teach_in():
-                payload = self.set_payload("HD_TEMPERATURE", self.get_id(), float(self.get_temp()))
+                payload = self.set_payload(
+                    "HD_TEMPERATURE", self.get_id(), float(self.get_temp()))
                 payloads.append(payload)
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_hum() == 'HD_UNKNOWN' and not self.is_teach_in():
-                payload = self.set_payload('HD_HUMIDITY', self.get_id(), float(self.get_hum()))
+                payload = self.set_payload(
+                    'HD_HUMIDITY', self.get_id(), float(self.get_hum()))
                 payloads.append(payload)
         elif self.get_type() == 'HD_CONTACT':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_contact() == 'HD_UNKNOWN' and not self.is_teach_in():
-                payload = self.set_payload(self.get_type(), self.get_id(), int(self.get_contact()))
+                payload = self.set_payload(
+                    self.get_type(), self.get_id(), int(self.get_contact()))
                 payloads.append(payload)
         elif self.get_type() == 'HD_ACTUATOR':
             if not self.get_id() == 'HD_UNKNOWN' and not self.get_actuator_output() == 'HD_UNKNOWN':
-                payload = self.set_payload(self.get_type(), self.get_id(), int(self.get_actuator_output()))
+                payload = self.set_payload(
+                    self.get_type(), self.get_id(), int(self.get_actuator_output()))
                 payloads.append(payload)
+        logging.info(payloads)
         return payloads
