@@ -3,6 +3,7 @@ from threading import Thread
 import sys
 import signal
 import json
+import random
 from MQTTClient import create_mqtt_client
 from get_config import get_parameter
 import requests
@@ -26,18 +27,21 @@ HOMEVENTS_IP = get_parameter("homevents_ip")
 HOMEVENTS_PORT = get_parameter("homevents_port")
 HOMEVENTS_URL = "http://{}:{}".format(HOMEVENTS_IP, HOMEVENTS_PORT)
 mqtt_client = None
-RED = [65535, 65535, 65535, 3500]
-ORANGE = [6500, 65535, 65535, 3500]
-YELLOW = [9000, 65535, 65535, 3500]
-GREEN = [16173, 65535, 65535, 3500]
-CYAN = [29814, 65535, 65535, 3500]
-BLUE = [43634, 65535, 65535, 3500]
-PURPLE = [50486, 65535, 65535, 3500]
-PINK = [58275, 65535, 47142, 3500]
-WHITE = [58275, 0, 65535, 5500]
-COLD_WHITE = [58275, 0, 65535, 9000]
-WARM_WHITE = [58275, 0, 65535, 3200]
-GOLD = [58275, 0, 65535, 2500]
+
+colors = {
+    "RED": [65535, 65535, 65535, 3500],
+    "ORANGE": [6500, 65535, 65535, 3500],
+    "YELLOW": [9000, 65535, 65535, 3500],
+    "GREEN": [16173, 65535, 65535, 3500],
+    "CYAN": [29814, 65535, 65535, 3500],
+    "BLUE": [43634, 65535, 65535, 3500],
+    "PURPLE": [50486, 65535, 65535, 3500],
+    "PINK": [58275, 65535, 47142, 3500],
+    "WHITE": [58275, 0, 65535, 5500],
+    "COLD_WHITE": [58275, 0, 65535, 9000],
+    "WARM_WHITE": [58275, 0, 65535, 3200],
+    "GOLD": [58275, 0, 65535, 2500]
+}
 
 
 def on_message(client, userdata, msg):
@@ -90,9 +94,9 @@ def event_manager(topic, payload):
             json_payload = json.loads(payload)
             name = json_payload['name']
             if name == "LAMPE_SALON_ON":
-                send_lifx_command("on", GOLD)
+                send_lifx_command("on", random.choice(list(colors.values())))
             elif name == "LAMPE_SALON_OFF":
-                send_lifx_command("off", GOLD)
+                send_lifx_command("off", random.choice(list(colors.values())))
             elif name == "REQUEST_WEATHER_CURRENT":
                 send_weather_request("current")
             elif name == "REQUEST_WEATHER_FORECAST":
@@ -124,7 +128,8 @@ def create_healthcheck(app_name):
 
 
 if __name__ == '__main__':
-    mqtt_client = create_mqtt_client(MQTT_HOST, MQTT_PORT, on_message, MQTT_TOPICS)
+    mqtt_client = create_mqtt_client(
+        MQTT_HOST, MQTT_PORT, on_message, MQTT_TOPICS)
     create_healthcheck("actionmanager")
     while True:
         sleep(1)
